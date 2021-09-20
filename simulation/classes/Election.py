@@ -16,5 +16,5 @@ class Election:
         return parties
 
     def init_voters(self):
-        voters = [Voter(self.parties[i]) for i in range(len(self.parties)) for j in range(len(self.parties[i]))]
+        voters = [Voter(i, self.parties) for i in range(len(self.parties)) for j in range(len(self.parties[i]))]
         pass
