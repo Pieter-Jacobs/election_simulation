@@ -1,10 +1,11 @@
 from imports import *
+from classes.Election import Election
 import numpy as np
 
 @hydra.main(config_path="conf", config_name="config.yaml")
 def main(cfg: DictConfig):
-    polls = np.array(cfg.polls.distribution) * cfg.polls.voters
-    print(polls)
+    #polls = np.array(cfg.polls.distribution) * cfg.polls.voters
+    election = Election()
     pass
 
 
