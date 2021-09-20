@@ -3,11 +3,10 @@ import numpy as np
 
 
 class Voter:
-    def __init__(self, uncertainty, party) -> None:
+    def __init__(self, party) -> None:
         self.party = party
         self.position = self.generate_position(party) 
         self.swing = np.random.uniform(low=0, high=0.5)
-        pass
 
     def vote(self):
         pass
@@ -16,6 +15,7 @@ class Voter:
         pass
     
     def generate_position(self, party):
-        print(self.party + np.random.rand(len(party)))
-        return self.party + np.random.rand(len(party))
+        zeros = np.zeros(len(party))
+        random_vector = [(zeros[i] + np.random.uniform(low=0,high=self.swing)) for i in range(len(zeros))] 
+        return self.party + random_vector
         
