@@ -16,14 +16,14 @@ def cosine_similarity(v1,v2):
 class Voter:
     def __init__(self, party, parties) -> None:
         self.party = party
-        self.swing = np.random.uniform(low=0, high=1)
+        self.swing = 15#np.random.uniform(low=0, high=0.5)
         self.position = self.generate_position(parties)
         self.similarities = self.compute_similarities(parties)
 
     def vote(self, polls):
         scores = self.similarities * polls
         party = np.argmax(scores)
-        return party
+        return party, party != self.party
     
     def generate_position(self, parties):
         zeros = np.zeros(len(parties[self.party]))
