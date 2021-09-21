@@ -8,6 +8,7 @@ class Election:
         self.polls = np.array(cfg.polls.distribution) * cfg.polls.voters
         self.parties = self.init_parties()
         self.voters = self.init_voters()
+        self.voters[100].vote(self.polls)
         pass
 
     def init_parties(self):
@@ -17,4 +18,4 @@ class Election:
 
     def init_voters(self):
         voters = [Voter(i, self.parties) for i in range(len(self.parties)) for j in range(len(self.parties[i]))]
-        pass
+        return voters

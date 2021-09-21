@@ -16,25 +16,23 @@ def cosine_similarity(v1,v2):
 class Voter:
     def __init__(self, party, parties) -> None:
         self.party = party
-        self.swing = np.random.uniform(low=0, high=0.5)
+        self.swing = np.random.uniform(low=0, high=1)
         self.position = self.generate_position(parties)
-        self.ranking, self.cos_sim_ranking = self.compute_ranking(parties)
+        self.similarities = self.compute_similarities(parties)
 
     def vote(self, polls):
-        
-        return
+        scores = self.similarities * polls
+        party = np.argmax(scores)
+        return party
     
     def generate_position(self, parties):
-        zeros = np.zeros(len(parties))
-        random_vector = [(zeros[i] + np.random.uniform(low=0,high=self.swing)) for i in range(len(zeros))] 
+        zeros = np.zeros(len(parties[self.party]))
+        random_vector = [(zeros[i] + np.random.uniform(low=-self.swing,high=self.swing)) for i in range(len(zeros))] 
         return parties[self.party] + random_vector
     
-    def compute_ranking(self, parties):
-        cos_sim_matrix = np.array([cosine_similarity(parties[6], parties[i]) for i in range(len(parties))])
-        cos_sim_ranking = sorted(cos_sim_matrix, reverse=True)
-        print(cos_sim_matrix)
-        ranking = np.argsort(-cos_sim_matrix)
-        return ranking, cos_sim_ranking
+    def compute_similarities(self, parties):
+        cos_sim_matrix = np.array([cosine_similarity(self.position, parties[i]) for i in range(len(parties))])
+        return cos_sim_matrix
 
     def compute_formation_score(self, polls):
         pass
