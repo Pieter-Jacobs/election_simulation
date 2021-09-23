@@ -44,17 +44,16 @@ class Election:
         strategic_vote_count = 0
         for voter in self.voters:
             vote, strategic = voter.vote(self.polls)
-            if strategic:
-                strategic_vote_count += 1
+            strategic_vote_count += strategic
             if vote not in vote_count.keys():
                 vote_count[vote] = 0 
             else:
                 vote_count[vote] += 1
-        vote_percentages = {k: v / len(self.voters) for k, v in vote_count.items()}
+        vote_percentages = {k: str(v / len(self.voters) * 100) + "%" for k, v in vote_count.items()}
         print("Percentage of votes gathered by each party:")
         print(vote_percentages)
         print("Percentage of strategic votes:")
-        print(strategic_vote_count / len(self.voters))
+        print(str((strategic_vote_count / len(self.voters)) * 100) + '%')
 
     def init_parties(self):
         """Initialises the parties based hard coded vectors in a text file"""

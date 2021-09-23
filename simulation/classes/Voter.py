@@ -14,9 +14,32 @@ def cosine_similarity(v1,v2):
 
 
 class Voter:
+    """ 
+    Defines a class that represents a voter in a democratic election
+
+    Attributes:
+    -----------
+    party: list of int
+        The political party the voter feels best represents his or her ideals
+    swing: float
+        The amount of uncertainty the voter has associated to the party that best represents his or her ideals
+    position: list of int
+        The position of the voter in vector space that represents his or her political stance
+    similarities: list of float
+        The cosine similarity of the voters position in vector space to that of all political parties
+
+    Methods
+    -------
+    vote():
+        Determines the voting scores associated with the parties and returns the party with the highest score
+    generate_position():
+        Generates and returns the position of the agent in vector state through slightly changing the vector of the voters preferred party
+    compute_similarity():
+        Computes and returns the cosine similarities of the agents position with all political parties in the election
+    """
     def __init__(self, party, parties) -> None:
         self.party = party
-        self.swing = 15#np.random.uniform(low=0, high=0.5)
+        self.swing = np.random.uniform(low=0, high=0.5)
         self.position = self.generate_position(parties)
         self.similarities = self.compute_similarities(parties)
 
@@ -33,6 +56,3 @@ class Voter:
     def compute_similarities(self, parties):
         cos_sim_matrix = np.array([cosine_similarity(self.position, parties[i]) for i in range(len(parties))])
         return cos_sim_matrix
-
-    def compute_formation_score(self, polls):
-        pass
