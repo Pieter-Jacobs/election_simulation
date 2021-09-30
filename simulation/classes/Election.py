@@ -1,6 +1,7 @@
 from imports import *
 from classes.Voter import Voter
 import numpy as np
+import statistics as stat
 
 
 class Election:
@@ -35,7 +36,8 @@ class Election:
         self.polls = np.array(cfg.polls.distribution) * cfg.polls.voters
         self.parties = self.init_parties()
         self.voters = self.init_voters()
-        pass
+        self.calculate_chance_to_influence()
+
 
     def count_votes(self):
         """Counts and prints the votes for each party and the percentage of strategic votes"""
@@ -43,7 +45,7 @@ class Election:
         vote_count = {}
         strategic_vote_count = 0
         for voter in self.voters:
-            vote, strategic = voter.vote(self.polls)
+            vote, strategic = voter.vote(self.chances)
             strategic_vote_count += strategic
             if vote not in vote_count.keys():
                 vote_count[vote] = 0 
@@ -65,3 +67,26 @@ class Election:
         """Initialises voters based on the polls"""
         voters = [Voter(i, self.parties) for i in range(len(self.polls)) for j in range(int(self.polls[i]))]
         return voters
+        
+
+    def calculate_chance_to_influence(self):
+        """ 
+            Returns the expectation a vote to make a difference, based upon the parties poll rankings. 
+            Currently based on winner takes all
+        """
+        
+        poll_uncertainty = 0.25   # Parameter indicating uncertainty in the poll / Maybe put in config
+
+        most_votes = np.max(self.polls)
+        self.chances = np.zeros(30)
+
+        for idx, poll_result in enumerate(np.nditer(self.polls)):
+          sigma = poll_result * poll_uncertainty
+          if sigma == 0:
+            sigma = 0.001
+
+          dist = stat.NormalDist(poll_result, sigma)
+          self.chances[idx] = 1 - dist.cdf(most_votes)
+
+        print(self.chances)
+
