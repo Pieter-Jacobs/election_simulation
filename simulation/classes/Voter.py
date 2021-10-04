@@ -57,13 +57,13 @@ class Voter:
         voter_vector = parties[self.party].copy()
         for party, opinion in enumerate(parties[self.party]):
             strategic_vote_threshold = np.random.uniform(low = 0, high = 1)
-            if (self.swing / 2) < strategic_vote_threshold < self.swing: # Slight opinion change 
+            if strategic_vote_threshold < self.swing: # Slight opinion change 
                 if opinion == 0:
                     voter_vector[party] += np.random.choice([-1,1])    
+                elif strategic_vote_threshold <= self.swing / 2: # Extreme opinion change  
+                    voter_vector[party] *= -1   
                 else:
                     voter_vector[party] = 0
-            elif strategic_vote_threshold <= self.swing / 2: # Extreme opinion change  
-                voter_vector[party] *= -1   
         return voter_vector
 
     def compute_similarities(self, parties):
