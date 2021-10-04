@@ -37,8 +37,6 @@ class Election:
         self.parties = self.init_parties()
         self.voters = self.init_voters()
         self.calculate_chance_to_influence()
-
-
     def count_votes(self):
         """Counts and prints the votes for each party and the percentage of strategic votes"""
         print("Counting votes...")
@@ -63,9 +61,9 @@ class Election:
         ) + os.path.sep + 'party_vector.csv', delimiter=',')
         return parties
 
-    def init_voters(self):
+    def init_voters(self, max_swing):
         """Initialises voters based on the polls"""
-        voters = [Voter(i, self.parties) for i in range(len(self.polls)) for j in range(int(self.polls[i]))]
+        voters = [Voter(i, self.parties, max_swing) for i in range(len(self.polls)) for j in range(int(self.polls[i]))]
         return voters
         
 

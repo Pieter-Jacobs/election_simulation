@@ -37,9 +37,9 @@ class Voter:
     compute_similarity():
         Computes and returns the cosine similarities of the agents position with all political parties in the election
     """
-    def __init__(self, party, parties) -> None:
+    def __init__(self, party, parties, max_swing) -> None:
         self.party = party
-        self.swing = np.random.uniform(low=0, high=0.5)
+        self.swing = np.random.uniform(low=0, high=max_swing)
         self.position = self.generate_position(parties)
         self.similarities = self.compute_similarities(parties)
 
@@ -48,11 +48,24 @@ class Voter:
         party = np.argmax(scores)
         return party, party != self.party
     
+    # def generate_position(self, parties):
+    #     zeros = np.zeros(len(parties[self.party]))
+    #     random_vector = [(zeros[i] + np.random.uniform(low=-self.swing,high=self.swing)) for i in range(len(zeros))] 
+    #     return parties[self.party] + random_vector
+
     def generate_position(self, parties):
-        zeros = np.zeros(len(parties[self.party]))
-        random_vector = [(zeros[i] + np.random.uniform(low=-self.swing,high=self.swing)) for i in range(len(zeros))] 
-        return parties[self.party] + random_vector
-    
+        voter_vector = parties[self.party].copy()
+        for party, opinion in enumerate(parties[self.party]):
+            strategic_vote_threshold = np.random.uniform(low = 0, high = 1)
+            if (self.swing / 2) < strategic_vote_threshold < self.swing: # Slight opinion change 
+                if opinion == 0:
+                    voter_vector[party] += np.random.choice([-1,1])    
+                else:
+                    voter_vector[party] = 0
+            elif strategic_vote_threshold <= self.swing / 2: # Extreme opinion change  
+                voter_vector[party] *= -1   
+        return voter_vector
+
     def compute_similarities(self, parties):
         cos_sim_matrix = np.array([cosine_similarity(self.position, parties[i]) for i in range(len(parties))])
         return cos_sim_matrix
