@@ -33,6 +33,7 @@ class Election:
         cfg: DictConfig 
             Dictionary containing the configuration of the hyperparameters
         """
+        self.seats_available = cfg.seats
         self.polls = np.array(cfg.polls.distribution) * cfg.polls.voters
         self.parties = self.init_parties()
         self.voters = self.init_voters()
@@ -71,10 +72,9 @@ class Election:
 
     def calculate_chance_to_influence(self):
         """ 
-            Returns the expectation a vote to make a difference, based upon the parties poll rankings. 
+            Calculates the expected chance of a vote to make a difference, based upon the parties poll rankings. 
             Currently based on winner takes all
         """
-        
         poll_uncertainty = 0.25   # Parameter indicating uncertainty in the poll / Maybe put in config
 
         most_votes = np.max(self.polls)
