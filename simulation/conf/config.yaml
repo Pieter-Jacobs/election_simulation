@@ -2,3 +2,4 @@ defaults:
   - polls: real_life
 uncertainty: 0.2
 seats: 75
+swing: 0.5
