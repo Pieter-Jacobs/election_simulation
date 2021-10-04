@@ -35,8 +35,9 @@ class Election:
         """
         self.polls = np.array(cfg.polls.distribution) * cfg.polls.voters
         self.parties = self.init_parties()
-        self.voters = self.init_voters()
+        self.voters = self.init_voters(cfg.swing)
         self.calculate_chance_to_influence()
+
     def count_votes(self):
         """Counts and prints the votes for each party and the percentage of strategic votes"""
         print("Counting votes...")
