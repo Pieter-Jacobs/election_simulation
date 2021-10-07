@@ -64,6 +64,7 @@ class Election:
         """Initialises the parties based hard coded vectors in a text file"""
         parties = np.genfromtxt(hydra.utils.get_original_cwd(
         ) + os.path.sep + 'party_vector.csv', delimiter=',')
+        print(parties)
         return parties
 
     def init_voters(self, max_swing):

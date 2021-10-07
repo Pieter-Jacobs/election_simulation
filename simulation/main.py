@@ -10,7 +10,6 @@ def main(cfg: DictConfig):
     np.random.seed(SEED)
     election = Election(cfg)
     election.count_votes()
-    Voter.print_switches()
     pass
 
 

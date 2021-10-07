@@ -12,6 +12,7 @@ def cosine_similarity(v1,v2):
         sumxx += x*x
         sumyy += y*y
         sumxy += x*y
+
     return sumxy/((sumxx**0.5)*(sumyy**0.5))
 
 
@@ -50,7 +51,6 @@ class Voter:
 
     def vote(self, polls):
         scores = self.similarities * polls
-        print(self.similarities)
         party = np.argmax(scores)
         Voter.switches[self.party][party] += 1
         return party, party != self.party
