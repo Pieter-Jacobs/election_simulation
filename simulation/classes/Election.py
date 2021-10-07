@@ -40,7 +40,6 @@ class Election:
         self.parties = self.init_parties()
         self.voters = self.init_voters(cfg.swing)
         self.calculate_chance_to_influence()
-        print(self.chances)
 
     def count_votes(self):
         """Counts and prints the votes for each party and the percentage of strategic votes"""
@@ -64,7 +63,6 @@ class Election:
         """Initialises the parties based hard coded vectors in a text file"""
         parties = np.genfromtxt(hydra.utils.get_original_cwd(
         ) + os.path.sep + 'party_vector.csv', delimiter=',')
-        print(parties)
         return parties
 
     def init_voters(self, max_swing):

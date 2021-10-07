@@ -81,5 +81,7 @@ class Voter:
     @staticmethod
     def print_switches():
         for row in Voter.switches:
-          print(row)
+          for entry in row:
+            print('{0: >5}'.format(entry), end="|")
+          print()
 
