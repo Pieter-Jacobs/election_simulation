@@ -1,5 +1,5 @@
 from imports import *
-from classes.Voter import Voter
+from classes.Voter import NR_OF_PARTIES, Voter
 import numpy as np
 import statistics as stat
 
@@ -26,6 +26,8 @@ class Election:
     init_voters():
         Initialises voters based on the polls
     """
+    NR_OF_PARTIES = 30
+
     def __init__(self, cfg) -> None:
         """
         Parameters:
@@ -38,6 +40,7 @@ class Election:
         self.parties = self.init_parties()
         self.voters = self.init_voters(cfg.swing)
         self.calculate_chance_to_influence()
+        print(self.chances)
 
     def count_votes(self):
         """Counts and prints the votes for each party and the percentage of strategic votes"""
@@ -74,10 +77,10 @@ class Election:
             Calculates the expected chance of a vote to make a difference, based upon the parties poll rankings. 
             Currently based on winner takes all
         """
-        poll_uncertainty = 0.25   # Parameter indicating uncertainty in the poll / Maybe put in config
+        poll_uncertainty = 0.5   # Parameter indicating uncertainty in the poll / Maybe put in config
 
         most_votes = np.max(self.polls)
-        self.chances = np.zeros(30)
+        self.chances = np.zeros(Election.NR_OF_PARTIES)
 
         for idx, poll_result in enumerate(np.nditer(self.polls)):
           sigma = poll_result * poll_uncertainty
@@ -87,5 +90,4 @@ class Election:
           dist = stat.NormalDist(poll_result, sigma)
           self.chances[idx] = 1 - dist.cdf(most_votes)
 
-        print(self.chances)
 

@@ -1,6 +1,8 @@
 from imports import *
 import numpy as np
 
+NR_OF_PARTIES = 30
+
 @njit
 def cosine_similarity(v1,v2):
     """Compute the cosine similarity between vectors v1 and v2"""
@@ -37,6 +39,9 @@ class Voter:
     compute_similarity():
         Computes and returns the cosine similarities of the agents position with all political parties in the election
     """
+    ## Static data
+    switches = [[0 for _ in range(NR_OF_PARTIES)] for _ in range(NR_OF_PARTIES)]
+
     def __init__(self, party, parties, max_swing) -> None:
         self.party = party
         self.swing = np.random.uniform(low=0, high=max_swing)
@@ -45,7 +50,9 @@ class Voter:
 
     def vote(self, polls):
         scores = self.similarities * polls
+        print(self.similarities)
         party = np.argmax(scores)
+        Voter.switches[self.party][party] += 1
         return party, party != self.party
     
     # def generate_position(self, parties):
@@ -69,3 +76,10 @@ class Voter:
     def compute_similarities(self, parties):
         cos_sim_matrix = np.array([cosine_similarity(self.position, parties[i]) for i in range(len(parties))])
         return cos_sim_matrix
+    
+
+    @staticmethod
+    def print_switches():
+        for row in Voter.switches:
+          print(row)
+
