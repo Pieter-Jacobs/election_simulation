@@ -99,6 +99,12 @@ class Election:
         """
     # if self.seats_available is None:
         poll_uncertainty = 0.5   # Parameter indicating uncertainty in the poll / Maybe put in config
+    # else:
+    #     votes_per_seat = len(self.voters) / self.seats_available      ## These comments hold the seats influence
+    #     self.seat_influence = np.zeros(Election.NR_OF_PARTIES)
+
+    #     for idx, poll_result in enumerate(np.nditer(self.polls)):                             ## This results in a percentage of how much a party has of an 'extra' seat,
+    #         self.seat_influence[idx] = (poll_result % votes_per_seat) / votes_per_seat        ## self.seat_influence is a vector with percentages for each party.
 
         most_votes = np.max(self.polls)
         self.chances = np.zeros(Election.NR_OF_PARTIES)
@@ -112,6 +118,5 @@ class Election:
             self.chances[idx] = 1 - dist.cdf(most_votes)
             # self.chances[idx] = 1                         ## Uncomment to disable strategic voting
         return
-          
-        
+
 
