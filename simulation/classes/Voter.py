@@ -67,7 +67,7 @@ class Voter:
             if strategic_vote_threshold < self.swing: # Slight opinion change 
                 if opinion == 0:
                     voter_vector[party] += np.random.choice([-1,1])    
-                elif strategic_vote_threshold <= self.swing / 2: # Extreme opinion change  
+                elif strategic_vote_threshold <= self.swing / 2: # Extreme opinion change 
                     voter_vector[party] *= -1   
                 else:
                     voter_vector[party] = 0
