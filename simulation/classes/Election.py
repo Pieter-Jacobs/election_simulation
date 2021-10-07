@@ -44,6 +44,7 @@ class Election:
     def count_votes(self):
         """Counts and prints the votes for each party and the percentage of strategic votes"""
         print("Counting votes...")
+        nr_voters = len(self.voters)
         vote_count = {}
         strategic_vote_count = 0
         for voter in self.voters:
@@ -53,11 +54,31 @@ class Election:
                 vote_count[vote] = 0 
             else:
                 vote_count[vote] += 1
-        vote_percentages = {k: str(v / len(self.voters) * 100) + "%" for k, v in vote_count.items()}
+        vote_percentages = {k: str(v / nr_voters * 100) + "%" for k, v in vote_count.items()}
         print("Percentage of votes gathered by each party:")
         print(vote_percentages)
+
+        if self.seats_available is not None:
+            votes_for_seat = nr_voters / self.seats_available
+            print(votes_for_seat)
+            seats = {k: v // votes_for_seat for k, v in vote_count.items()} 
+            seats_occupied = sum([val for val in seats.values()])
+
+            while seats_occupied < self.seats_available:
+              max_ratio = -1
+              party = -1
+              for k, v in vote_count.items():
+                  if v / (seats[k] + 1) > max_ratio:
+                      party = k
+                      max_ratio = v / (seats[k] + 1)
+              seats[party] += 1
+              seats_occupied += 1
+
+            print("Seats for each party")
+            print(seats)
+
         print("Percentage of strategic votes:")
-        print(str((strategic_vote_count / len(self.voters)) * 100) + '%')
+        print(str(strategic_vote_count / nr_voters * 100) + '%')
 
     def init_parties(self):
         """Initialises the parties based hard coded vectors in a text file"""
@@ -76,17 +97,21 @@ class Election:
             Calculates the expected chance of a vote to make a difference, based upon the parties poll rankings. 
             Currently based on winner takes all
         """
+    # if self.seats_available is None:
         poll_uncertainty = 0.5   # Parameter indicating uncertainty in the poll / Maybe put in config
 
         most_votes = np.max(self.polls)
         self.chances = np.zeros(Election.NR_OF_PARTIES)
 
         for idx, poll_result in enumerate(np.nditer(self.polls)):
-          sigma = poll_result * poll_uncertainty
-          if sigma == 0:
-            sigma = 0.001
+            sigma = poll_result * poll_uncertainty
+            if sigma == 0:
+                sigma = 0.001
 
-          dist = stat.NormalDist(poll_result, sigma)
-          self.chances[idx] = 1 - dist.cdf(most_votes)
-
+            dist = stat.NormalDist(poll_result, sigma)
+            self.chances[idx] = 1 - dist.cdf(most_votes)
+            # self.chances[idx] = 1                         ## Uncomment to disable strategic voting
+        return
+          
+        
 
