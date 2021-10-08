@@ -49,6 +49,7 @@ class Voter:
         self.swing = np.random.uniform(low=0, high=max_swing)
         self.position = self.generate_position(parties)
         self.similarities = self.compute_similarities(parties)
+        self.party = np.argmax(self.similarities)
 
 
     def vote(self, polls):
@@ -84,9 +85,12 @@ class Voter:
     
 
     @staticmethod
-    def print_switches():
+    def switch_matrix() -> str:
+        to_return = ""
         for row in Voter.switches:
-          for entry in row:
-            print('{0: >5}'.format(entry), end="|")
-          print()
+            for entry in row:
+                to_return += '{0: >5}'.format(entry) + "|"
+            to_return += '\n'
+
+        return to_return
 

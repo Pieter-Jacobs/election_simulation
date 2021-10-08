@@ -35,6 +35,8 @@ class Election:
         cfg: DictConfig 
             Dictionary containing the configuration of the hyperparameters
         """
+        self.cfg = cfg
+        print(cfg.polls)
         self.seats_available = cfg.seats
         self.poll_uncertainty = cfg.uncertainty
         self.polls = np.array(cfg.polls.distribution) * cfg.polls.voters
@@ -91,6 +93,7 @@ class Election:
 
     def init_voters(self, max_swing):
         """Initialises voters based on the polls"""
+        self.swing = max_swing
         voters = [Voter(i, self.parties, max_swing) for i in range(len(self.polls)) for j in range(int(self.polls[i]))]
         return voters
         
@@ -119,7 +122,7 @@ class Election:
 
             dist = stat.NormalDist(poll_result, sigma)
             self.chances[idx] = 1 - dist.cdf(most_votes)
-            # self.chances[idx] = 1                         ## Uncomment to disable strategic voting
+            self.chances[idx] = 1                         ## Uncomment to disable strategic voting
         return
 
 

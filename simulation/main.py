@@ -1,6 +1,6 @@
 from imports import *
 from classes.Election import Election
-from classes.Voter import Voter
+from classes.Plotter import Plotter
 import numpy as np
 
 SEED = 2021
@@ -10,7 +10,7 @@ def main(cfg: DictConfig):
     np.random.seed(SEED)
     election = Election(cfg)
     election.count_votes()
-    Voter.print_switches()
+    Plotter(election)
 
 
 if __name__ == "__main__":
