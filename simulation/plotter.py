@@ -83,7 +83,7 @@ def plot(strategic_votes: dict) -> None:
 
 def main():
   strategic_votes, matrices = get_stats()
-  # plot(strategic_votes)
+  plot(strategic_votes)
   for idx in range(11):
     heat_map(matrices[idx/10])
 
