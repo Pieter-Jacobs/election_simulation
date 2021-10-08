@@ -80,11 +80,13 @@ class Election:
         print("Percentage of strategic votes:")
         print(str(strategic_vote_count / nr_voters * 100) + '%')
 
+
     def init_parties(self):
         """Initialises the parties based hard coded vectors in a text file"""
         parties = np.genfromtxt(hydra.utils.get_original_cwd(
         ) + os.path.sep + 'party_vector.csv', delimiter=',')
         return parties
+
 
     def init_voters(self, max_swing):
         """Initialises voters based on the polls"""
@@ -112,6 +114,4 @@ class Election:
             self.chances[idx] = 1 - dist.cdf(most_votes)
             # self.chances[idx] = 1                         ## Uncomment to disable strategic voting
         return
-          
         
-

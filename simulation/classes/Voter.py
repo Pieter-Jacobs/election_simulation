@@ -4,7 +4,7 @@ import numpy as np
 NR_OF_PARTIES = 30
 
 @njit
-def cosine_similarity(v1,v2):
+def cosine_similarity(v1, v2):
     """Compute the cosine similarity between vectors v1 and v2"""
     sumxx, sumxy, sumyy = 0, 0, 0
     for i in range(len(v1)):
@@ -43,11 +43,13 @@ class Voter:
     ## Static data
     switches = [[0 for _ in range(NR_OF_PARTIES)] for _ in range(NR_OF_PARTIES)]
 
+
     def __init__(self, party, parties, max_swing) -> None:
         self.party = party
         self.swing = np.random.uniform(low=0, high=max_swing)
         self.position = self.generate_position(parties)
         self.similarities = self.compute_similarities(parties)
+
 
     def vote(self, polls):
         scores = self.similarities * polls
@@ -55,10 +57,12 @@ class Voter:
         Voter.switches[self.party][party] += 1
         return party, party != self.party
     
+
     # def generate_position(self, parties):
     #     zeros = np.zeros(len(parties[self.party]))
     #     random_vector = [(zeros[i] + np.random.uniform(low=-self.swing,high=self.swing)) for i in range(len(zeros))] 
     #     return parties[self.party] + random_vector
+
 
     def generate_position(self, parties):
         voter_vector = parties[self.party].copy()
@@ -72,6 +76,7 @@ class Voter:
                 else:
                     voter_vector[party] = 0
         return voter_vector
+
 
     def compute_similarities(self, parties):
         cos_sim_matrix = np.array([cosine_similarity(self.position, parties[i]) for i in range(len(parties))])
