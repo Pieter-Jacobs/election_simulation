@@ -57,7 +57,7 @@ class Election:
         self.strategic_vote_count = 0
         for voter in self.voters:
             # vote, strategic = voter.vote(self.chances)
-            vote, strategic = voter.vote(self.chances, self.seat_influence)
+            vote, strategic = voter.vote(self.polls, self.seat_influence)
             self.strategic_vote_count += strategic
             if vote not in vote_count.keys():
                 vote_count[vote] = 0 
@@ -127,9 +127,7 @@ class Election:
             if sigma == 0:
                 sigma = 0.001
 
-            dist = stat.NormalDist(poll_result, sigma)
-            self.chances[idx] = 1 - dist.cdf(most_votes)
-            # self.chances[idx] = 1                         ## Uncomment to disable strategic voting
+           saver polls
         return
 
 

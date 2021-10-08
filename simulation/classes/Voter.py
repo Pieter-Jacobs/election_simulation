@@ -52,8 +52,7 @@ class Voter:
         self.party = np.argmax(self.similarities)
 
     def vote(self, polls, seats):
-        # scores = self.similarities * polls
-        scores = self.similarities * ((1 - self.importance_of_seats) * polls + (self.importance_of_seats * seats))
+        scores = self.similarities * ((1 - self.importance_of_seats) * posaver pollslls + (self.importance_of_seats * seats))
         party = np.argmax(scores)
         Voter.switches[self.party][party] += 1
         return party, party != self.party
