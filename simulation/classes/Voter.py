@@ -47,13 +47,20 @@ class Voter:
     def __init__(self, party, parties, max_swing) -> None:
         self.party = party
         self.swing = np.random.uniform(low=0, high=max_swing)
+        self.importance_of_seats = np.random.uniform(0, 1)
         self.position = self.generate_position(parties)
         self.similarities = self.compute_similarities(parties)
         self.party = np.argmax(self.similarities)
 
+<<<<<<< HEAD
+    def vote(self, polls, seats):
+        # scores = self.similarities * polls
+        scores = self.similarities * (((1 - self.importance_of_seats) * polls) + (self.importance_of_seats * seats))
+=======
 
     def vote(self, polls):
         scores = self.similarities * polls
+>>>>>>> 908fd9366a186dc38a7d30c2786329f33538ae66
         party = np.argmax(scores)
         Voter.switches[self.party][party] += 1
         return party, party != self.party
