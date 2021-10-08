@@ -56,8 +56,7 @@ class Election:
         vote_count = {}
         self.strategic_vote_count = 0
         for voter in self.voters:
-            # vote, strategic = voter.vote(self.chances)
-            vote, strategic = voter.vote(self.chances, self.seat_influence)
+            vote, strategic = voter.vote(self.polls, self.seat_influence)
             self.strategic_vote_count += strategic
             if vote not in vote_count.keys():
                 vote_count[vote] = 0 
