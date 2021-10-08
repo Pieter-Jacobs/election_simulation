@@ -20,6 +20,13 @@ def average_matrix(matrices):
   return avg_matrix
 
 
+def heat_map(matrix):
+  print(matrix)
+  seaborn.heatmap(matrix)
+  plt.show()
+  
+
+
 def get_stats():
   saved_files_folder = os.getcwd() + os.sep + "saver" + os.sep
   strategic_votes = {k/10: [] for k in range(11)}
@@ -33,21 +40,22 @@ def get_stats():
           swing, strat_vote = firstline.split(" ")
           strategic_votes[float(swing)].append(int(strat_vote[:-1]))
 
-  #         f.readline() ## Votes (not required)
-  #         f.readline() ## seats (not required)
-  #         matrix = []
-  #         for line in f.readlines():
-  #           entries = line.split('|')
-  #           matrix.append([int(entry.strip()) for entry in entries if entry.strip() != ""])
+          f.readline() ## Votes (not required)
+          f.readline() ## seats (not required)
+          matrix = []
+          for line in f.readlines():
+            entries = line.split('|')
+            matrix.append([int(entry.strip()) for entry in entries if entry.strip() != ""])
+            
+          print(matrix)
           
-  #         matrices[float(swing)].append(matrix)
+          matrices[float(swing)].append(matrix)
   
-  # for k in matrices.values():
-  #   matrices[k] = average_matrix(matrices[k])
+  for k in matrices.keys():
+    matrices[k] = average_matrix(matrices[k])
 
-  # print(matrices)
  
-  return strategic_votes #, matrices
+  return strategic_votes, matrices
 
 
 def plot(strategic_votes: dict) -> None:
@@ -74,9 +82,10 @@ def plot(strategic_votes: dict) -> None:
 
 
 def main():
-  strategic_votes = get_stats()#, matrices = get_stats()
-  plot(strategic_votes)
-  # heat_map(matrices)
+  strategic_votes, matrices = get_stats()
+  # plot(strategic_votes)
+  for idx in range(11):
+    heat_map(matrices[idx/10])
 
 
 
