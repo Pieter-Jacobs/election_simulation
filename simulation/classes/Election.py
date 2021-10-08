@@ -36,6 +36,7 @@ class Election:
             Dictionary containing the configuration of the hyperparameters
         """
         self.seats_available = cfg.seats
+        self.poll_uncertainty = cfg.uncertainty
         self.polls = np.array(cfg.polls.distribution) * cfg.polls.voters
         self.parties = self.init_parties()
         self.voters = self.init_voters(cfg.swing)
@@ -81,11 +82,13 @@ class Election:
         print("Percentage of strategic votes:")
         print(str(strategic_vote_count / nr_voters * 100) + '%')
 
+
     def init_parties(self):
         """Initialises the parties based hard coded vectors in a text file"""
         parties = np.genfromtxt(hydra.utils.get_original_cwd(
         ) + os.path.sep + 'party_vector.csv', delimiter=',')
         return parties
+
 
     def init_voters(self, max_swing):
         """Initialises voters based on the polls"""
