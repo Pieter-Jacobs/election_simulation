@@ -20,11 +20,13 @@ class Election:
     Methods
     -------
     count_votes():
-        Counts the votes for each party and determines the amount of strategic votes
+        Counts the votes for each party and determines the amount of strategic votes, also calculates the number of seats for each party
     init_parties():
         Initialises the parties based hard coded vectors in a text file
     init_voters():
         Initialises voters based on the polls
+    calculate_chance_to_influence():
+        calculates chances that a vote will make a difference and influence the elections
     """
     NR_OF_PARTIES = 30
 
@@ -45,7 +47,10 @@ class Election:
         self.strategic_vote_count = 0
 
     def count_votes(self):
-        """Counts and prints the votes for each party and the percentage of strategic votes"""
+        """
+            Counts and prints the votes for each party and the percentage of strategic votes,
+            then counts and prints the number of seats each party obtained.
+        """
         print("Counting votes...")
         nr_voters = len(self.voters)
         vote_count = {}
@@ -102,17 +107,17 @@ class Election:
 
     def calculate_chance_to_influence(self):
         """ 
-            Calculates the expected chance of a vote to make a difference, based upon the parties poll rankings. 
-            Currently based on winner takes all
+            Calculates the expected chance of a vote to make a difference, based upon the parties poll rankings, 
+            and calculates the expected influence of a vote to take an extra seat.
         """
     # if self.seats_available is None:
         poll_uncertainty = 0.5   # Parameter indicating uncertainty in the poll / Maybe put in config
     # else:
-        votes_per_seat = len(self.voters) / self.seats_available      ## These comments hold the seats influence
+        votes_per_seat = len(self.voters) / self.seats_available
         self.seat_influence = np.zeros(Election.NR_OF_PARTIES)
 
-        for idx, poll_result in enumerate(np.nditer(self.polls)):                             ## This results in a percentage of how much a party has of an 'extra' seat,
-            self.seat_influence[idx] = (poll_result % votes_per_seat) / votes_per_seat        ## self.seat_influence is a vector with percentages for each party.
+        for idx, poll_result in enumerate(np.nditer(self.polls)):
+            self.seat_influence[idx] = (poll_result % votes_per_seat) / votes_per_seat
 
         most_votes = np.max(self.polls)
         self.chances = np.zeros(Election.NR_OF_PARTIES)
