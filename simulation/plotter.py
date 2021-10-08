@@ -22,7 +22,7 @@ def average_matrix(matrices):
 
 def heat_map(matrix):
   print(matrix)
-  seaborn.heatmap(matrix)
+  seaborn.heatmap(matrix, vmin=0, vmax=1500)
   plt.show()
   
 
