@@ -17,12 +17,23 @@ def average_matrix(matrices):
         avg_matrix[idx][jdx] += entry
   
   avg_matrix = [[entry / len(matrices) for entry in row] for row in avg_matrix]
-  return avg_matrix
+  to_return = []
+  for row in avg_matrix:
+    total = sum(row)
+    new_row = []
+    for entry in row:
+      new_row.append(entry / total * 100 if total > 0 else 0)
+    
+    to_return.append(new_row)
+  return to_return
 
 
-def heat_map(matrix):
-  print(matrix)
-  seaborn.heatmap(matrix, vmin=0, vmax=1500)
+def heat_map(matrix, label):
+  seaborn.heatmap(matrix, vmin=0, vmax=100, cmap="vlag")
+  plt.xlabel("Voted For")
+  plt.ylabel("Original Party")
+  plt.suptitle(f"Voter Distribution for swing of {label}")
+  plt.savefig(os.getcwd() + os.sep + "figures" + os.sep + "heatmap" + str(label) + ".pdf")
   plt.show()
   
 
@@ -74,10 +85,11 @@ def plot(strategic_votes: dict) -> None:
 
   plt.plot(swings, strat_votes)
   plt.xlabel("Max swing")
-  plt.ylabel("Strategic votes percentage")
+  plt.ylabel("Strategic voting percentage")
   plt.title("Swing vs Strategic votes")
   plt.axis([0, 1, 0, 1.25 * max(strat_votes)])
   plt.errorbar(swings, strat_votes, stddevs)
+  plt.savefig(os.getcwd() + os.sep + "figures" + os.sep + "graph.pdf")
   plt.show()
 
 
@@ -85,7 +97,7 @@ def main():
   strategic_votes, matrices = get_stats()
   plot(strategic_votes)
   for idx in range(11):
-    heat_map(matrices[idx/10])
+    heat_map(matrices[idx/10], label = idx / 10)
 
 
 
