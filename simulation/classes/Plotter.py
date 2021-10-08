@@ -11,7 +11,7 @@ class Plotter:
     swing = election.swing
     cfg = election.cfg
     print(os.getcwd())
-    filename = hydra.utils.get_original_cwd() + os.sep + cfg.polls.name + "_unc_" + str(cfg.uncertainty) + "_swing_" + str(cfg.swing)
+    filename = hydra.utils.get_original_cwd() + os.sep + "plotter" + os.sep + cfg.polls.name + "_unc_" + str(cfg.uncertainty) + "_swing_" + str(cfg.swing)
 
     with open(filename + "conf_matrix.csv", "w") as f:
       f.write(matrix)
