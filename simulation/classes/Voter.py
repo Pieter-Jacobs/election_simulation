@@ -43,7 +43,6 @@ class Voter:
     ## Static data
     switches = [[0 for _ in range(NR_OF_PARTIES)] for _ in range(NR_OF_PARTIES)]
 
-
     def __init__(self, party, parties, max_swing) -> None:
         self.party = party
         self.swing = np.random.uniform(low=0, high=max_swing)
@@ -54,7 +53,7 @@ class Voter:
 
     def vote(self, polls, seats):
         # scores = self.similarities * polls
-        scores = self.similarities * (((1 - self.importance_of_seats) * polls) + (self.importance_of_seats * seats))
+        scores = self.similarities * ((1 - self.importance_of_seats) * polls + (self.importance_of_seats * seats))
         party = np.argmax(scores)
         Voter.switches[self.party][party] += 1
         return party, party != self.party
@@ -95,3 +94,6 @@ class Voter:
 
         return to_return
 
+    @staticmethod
+    def set_switches():
+        Voter.switches = [[0 for _ in range(NR_OF_PARTIES)] for _ in range(NR_OF_PARTIES)]

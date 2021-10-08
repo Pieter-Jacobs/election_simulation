@@ -36,35 +36,34 @@ class Election:
             Dictionary containing the configuration of the hyperparameters
         """
         self.cfg = cfg
-        print(cfg.polls)
         self.seats_available = cfg.seats
         self.poll_uncertainty = cfg.uncertainty
         self.polls = np.array(cfg.polls.distribution) * cfg.polls.voters
         self.parties = self.init_parties()
         self.voters = self.init_voters(cfg.swing)
         self.calculate_chance_to_influence()
+        self.strategic_vote_count = 0
 
     def count_votes(self):
         """Counts and prints the votes for each party and the percentage of strategic votes"""
         print("Counting votes...")
         nr_voters = len(self.voters)
         vote_count = {}
-        strategic_vote_count = 0
+        self.strategic_vote_count = 0
         for voter in self.voters:
             # vote, strategic = voter.vote(self.chances)
             vote, strategic = voter.vote(self.chances, self.seat_influence)
-            strategic_vote_count += strategic
+            self.strategic_vote_count += strategic
             if vote not in vote_count.keys():
                 vote_count[vote] = 0 
             else:
                 vote_count[vote] += 1
-        vote_percentages = {k: str(v / nr_voters * 100) + "%" for k, v in vote_count.items()}
+        self.vote_percentages = {k: str(v / nr_voters * 100)[:4] + "%" for k, v in vote_count.items()}
         print("Percentage of votes gathered by each party:")
-        print(vote_percentages)
+        print(self.vote_percentages)
 
         if self.seats_available is not None:
             votes_for_seat = nr_voters / self.seats_available
-            print(votes_for_seat)
             seats = {k: v // votes_for_seat for k, v in vote_count.items()} 
             seats_occupied = sum([val for val in seats.values()])
 
@@ -80,9 +79,10 @@ class Election:
 
             print("Seats for each party")
             print(seats)
+            self.seats = seats
 
         print("Percentage of strategic votes:")
-        print(str(strategic_vote_count / nr_voters * 100) + '%')
+        print(str(self.strategic_vote_count / nr_voters * 100) + '%')
 
 
     def init_parties(self):
@@ -95,6 +95,7 @@ class Election:
     def init_voters(self, max_swing):
         """Initialises voters based on the polls"""
         self.swing = max_swing
+        Voter.set_switches()
         voters = [Voter(i, self.parties, max_swing) for i in range(len(self.polls)) for j in range(int(self.polls[i]))]
         return voters
         
@@ -123,7 +124,7 @@ class Election:
 
             dist = stat.NormalDist(poll_result, sigma)
             self.chances[idx] = 1 - dist.cdf(most_votes)
-            self.chances[idx] = 1                         ## Uncomment to disable strategic voting
+            # self.chances[idx] = 1                         ## Uncomment to disable strategic voting
         return
 
 

@@ -1,16 +1,14 @@
 from imports import *
 from classes.Election import Election
-from classes.Plotter import Plotter
+from classes.Saver import Saver
 import numpy as np
-
-SEED = 2021
 
 @hydra.main(config_path="conf", config_name="config.yaml")
 def main(cfg: DictConfig):
-    np.random.seed(SEED)
+    np.random.seed(cfg.run)
     election = Election(cfg)
     election.count_votes()
-    Plotter(election)
+    Saver(election)
 
 
 if __name__ == "__main__":
