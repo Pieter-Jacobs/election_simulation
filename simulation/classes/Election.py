@@ -1,8 +1,9 @@
 from imports import *
 from classes.Voter import NR_OF_PARTIES, Voter
+from classes.Plotter import Plotter
 import numpy as np
 import statistics as stat
-
+from helpers import *
 
 class Election:
     """ 
@@ -42,6 +43,8 @@ class Election:
         self.poll_uncertainty = cfg.uncertainty
         self.polls = np.array(cfg.polls.distribution) * cfg.polls.voters
         self.parties = self.init_parties()
+        plotter = Plotter()
+        plotter.plot_parties_2d(self.parties)
         self.voters = self.init_voters(cfg.swing)
         self.calculate_chance_to_influence()
         self.strategic_vote_count = 0
@@ -130,5 +133,4 @@ class Election:
             self.chances[idx] = 1 - dist.cdf(most_votes)
             # self.chances[idx] = 1                         ## Uncomment to disable strategic voting
         return
-
 

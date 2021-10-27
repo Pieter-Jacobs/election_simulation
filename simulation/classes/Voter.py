@@ -1,19 +1,9 @@
 from imports import *
 import numpy as np
+from helpers import *
 
 NR_OF_PARTIES = 30
 
-@njit
-def cosine_similarity(v1, v2):
-    """Compute the cosine similarity between vectors v1 and v2"""
-    sumxx, sumxy, sumyy = 0, 0, 0
-    for i in range(len(v1)):
-        x = v1[i]; y = v2[i]
-        sumxx += x*x
-        sumyy += y*y
-        sumxy += x*y
-
-    return sumxy/((sumxx**0.5)*(sumyy**0.5))
 
 
 class Voter:
@@ -37,7 +27,7 @@ class Voter:
         Determines the voting scores associated with the parties and returns the party with the highest score
     generate_position():
         Generates and returns the position of the agent in vector state through slightly changing the vector of the voters preferred party
-    compute_similarity():
+    compute_voter_similarities():
         Computes and returns the cosine similarities of the agents position with all political parties in the election
     """
     ## Static data
@@ -48,16 +38,16 @@ class Voter:
         self.swing = np.random.uniform(low=0, high=max_swing)
         self.importance_of_seats = np.random.uniform(0, 1)
         self.position = self.generate_position(parties)
-        self.similarities = self.compute_similarities(parties)
+        self.similarities = self.compute_voter_similarities(parties)
         self.party = np.argmax(self.similarities)
+        self.compute_coalition_score(parties)
 
-    def vote(self, polls, seats):
+    def vote(self, polls, seats, party_similarities):
         scores = self.similarities * ((1 - self.importance_of_seats) * polls + (self.importance_of_seats * seats))
         party = np.argmax(scores)
         Voter.switches[self.party][party] += 1
         return party, party != self.party
     
-
     # def generate_position(self, parties):
     #     zeros = np.zeros(len(parties[self.party]))
     #     random_vector = [(zeros[i] + np.random.uniform(low=-self.swing,high=self.swing)) for i in range(len(zeros))] 
@@ -78,10 +68,19 @@ class Voter:
         return voter_vector
 
 
-    def compute_similarities(self, parties):
+    def compute_voter_similarities(self, parties):
         cos_sim_matrix = np.array([cosine_similarity(self.position, parties[i]) for i in range(len(parties))])
         return cos_sim_matrix
     
+    def compute_party_similarities(self, parties):
+        cos_sim_matrix = np.array([[cosine_similarity(parties[i], parties[j]) for i in range(len(parties))] for j in range(len(parties))])
+        print(cos_sim_matrix[0])
+        return cos_sim_matrix
+
+    def compute_coalition_score(self, parties):
+        voter_similarities = self.compute_voter_similarities(parties)
+        party_similarities = self.compute_party_similarities(parties)
+        pass
 
     @staticmethod
     def switch_matrix() -> str:
