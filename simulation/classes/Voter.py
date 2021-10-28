@@ -74,12 +74,12 @@ class Voter:
     
     def compute_party_similarities(self, parties):
         cos_sim_matrix = np.array([[cosine_similarity(parties[i], parties[j]) for i in range(len(parties))] for j in range(len(parties))])
-        print(cos_sim_matrix[0])
         return cos_sim_matrix
 
     def compute_coalition_score(self, parties):
         voter_similarities = self.compute_voter_similarities(parties)
         party_similarities = self.compute_party_similarities(parties)
+        
         pass
 
     @staticmethod

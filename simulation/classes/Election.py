@@ -41,10 +41,14 @@ class Election:
         self.cfg = cfg
         self.seats_available = cfg.seats
         self.poll_uncertainty = cfg.uncertainty
-        self.polls = np.array(cfg.polls.distribution) * cfg.polls.voters
+        self.polls = np.array(cfg.polls.distribution) # * cfg.polls.voters
         self.parties = self.init_parties()
-        plotter = Plotter()
-        plotter.plot_parties_2d(self.parties)
+        # plotter = Plotter()
+        # plotter.plot_parties_2d(self.parties)
+        self.coalitions = []
+        print("Computing all possible coalitions...")
+        self.determine_possible_coalitions(numbers = {i:num for i, num in enumerate(self.polls)})
+        print(self.coalitions)
         self.voters = self.init_voters(cfg.swing)
         self.calculate_chance_to_influence()
         self.strategic_vote_count = 0
@@ -105,7 +109,22 @@ class Election:
         Voter.set_switches()
         voters = [Voter(i, self.parties, max_swing) for i in range(len(self.polls)) for j in range(int(self.polls[i]))]
         return voters
-        
+    
+    def determine_possible_coalitions(self, numbers, partial = {}):
+        s = sum(list(partial.values()))
+        # check if the partial makes up more than 50\% of seats
+        if s >= 0.5 and partial not in self.coalitions and len(partial) <= 5: 
+            #print("sum(%s)>%s" % (list(partial.values()), 0.5))
+            self.coalitions.append(partial)
+            print(self.coalitions)
+        for i, (party, num) in enumerate(numbers.items()):
+            remaining = {party:num for party, num in zip(list(numbers.keys())[i+1:], list(numbers.values())[i+1:])}
+            partial_copy = partial.copy()
+            partial_copy[party] = num
+            if len(partial_copy) > 5:
+                return
+            else:
+                self.determine_possible_coalitions(remaining, partial_copy) 
 
     def calculate_chance_to_influence(self):
         """ 
