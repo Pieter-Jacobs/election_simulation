@@ -5,6 +5,7 @@ import numpy as np
 import statistics as stat
 from helpers import *
 
+
 class Election:
     """ 
     Defines a class that is used to run a simulation of a democratic election
@@ -41,14 +42,14 @@ class Election:
         self.cfg = cfg
         self.seats_available = cfg.seats
         self.poll_uncertainty = cfg.uncertainty
-        self.polls = np.array(cfg.polls.distribution) # * cfg.polls.voters
+        self.polls = np.array(cfg.polls.distribution) * cfg.polls.voters
         self.parties = self.init_parties()
         # plotter = Plotter()
         # plotter.plot_parties_2d(self.parties)
         self.coalitions = []
         print("Computing all possible coalitions...")
-        self.determine_possible_coalitions(numbers = {i:num for i, num in enumerate(self.polls)})
-        print(self.coalitions)
+        self.determine_possible_coalitions(
+            numbers={i: num for i, num in enumerate(self.polls/cfg.polls.voters)})
         self.voters = self.init_voters(cfg.swing)
         self.calculate_chance_to_influence()
         self.strategic_vote_count = 0
@@ -63,19 +64,20 @@ class Election:
         vote_count = {}
         self.strategic_vote_count = 0
         for voter in self.voters:
-            vote, strategic = voter.vote(self.polls, self.seat_influence)
+            vote, strategic = voter.vote(self.polls, self.parties, self.seat_influence, self.coalitions)
             self.strategic_vote_count += strategic
             if vote not in vote_count.keys():
-                vote_count[vote] = 0 
+                vote_count[vote] = 0
             else:
                 vote_count[vote] += 1
-        self.vote_percentages = {k: str(v / nr_voters * 100)[:4] + "%" for k, v in vote_count.items()}
+        self.vote_percentages = {
+            k: str(v / nr_voters * 100)[:4] + "%" for k, v in vote_count.items()}
         print("Percentage of votes gathered by each party:")
         print(self.vote_percentages)
 
         if self.seats_available is not None:
             votes_for_seat = nr_voters / self.seats_available
-            seats = {k: v // votes_for_seat for k, v in vote_count.items()} 
+            seats = {k: v // votes_for_seat for k, v in vote_count.items()}
             seats_occupied = sum([val for val in seats.values()])
 
             while seats_occupied < self.seats_available:
@@ -95,46 +97,49 @@ class Election:
         print("Percentage of strategic votes:")
         print(str(self.strategic_vote_count / nr_voters * 100) + '%')
 
-
     def init_parties(self):
         """Initialises the parties based hard coded vectors in a text file"""
         parties = np.genfromtxt(hydra.utils.get_original_cwd(
         ) + os.path.sep + 'party_vector.csv', delimiter=',')
         return parties
 
-
     def init_voters(self, max_swing):
         """Initialises voters based on the polls"""
         Voter.set_switches()
-        voters = [Voter(i, self.parties, max_swing) for i in range(len(self.polls)) for j in range(int(self.polls[i]))]
+        voters = [Voter(i, self.parties, max_swing) for i in range(
+            len(self.polls)) for j in range(int(self.polls[i]))]
         return voters
-    
-    def determine_possible_coalitions(self, numbers, partial = {}):
-        s = sum(list(partial.values()))
+
+    def determine_possible_coalitions(self, numbers, partial={}):
+        coalition_seats = sum(list(partial.values()))
         # check if the partial makes up more than 50\% of seats
-        if s >= 0.5 and partial not in self.coalitions:
+        if coalition_seats >= 0.5 and partial not in self.coalitions:
             self.coalitions.append(list(partial.keys()))
         for i, (party, num) in enumerate(numbers.items()):
-            remaining = {party:num for party, num in zip(list(numbers.keys())[i+1:], list(numbers.values())[i+1:])}
+            remaining = {party: num for party, num in zip(
+                list(numbers.keys())[i+1:], list(numbers.values())[i+1:])}
             partial_copy = partial.copy()
             partial_copy[party] = num
-            if len(partial_copy) > 5: # No more than 5 parties are allowed in a coalition
+            if len(partial_copy) > 5:  # No more than 5 parties are allowed in a coalition
                 return
             else:
-                self.determine_possible_coalitions(remaining, partial_copy) 
+                self.determine_possible_coalitions(remaining, partial_copy)
+
     def calculate_chance_to_influence(self):
         """ 
             Calculates the expected chance of a vote to make a difference, based upon the parties poll rankings, 
             and calculates the expected influence of a vote to take an extra seat.
         """
     # if self.seats_available is None:
-        poll_uncertainty = 0.5   # Parameter indicating uncertainty in the poll / Maybe put in config
+        # Parameter indicating uncertainty in the poll / Maybe put in config
+        poll_uncertainty = 0.5
     # else:
         votes_per_seat = len(self.voters) / self.seats_available
         self.seat_influence = np.zeros(Election.NR_OF_PARTIES)
 
         for idx, poll_result in enumerate(np.nditer(self.polls)):
-            self.seat_influence[idx] = (poll_result % votes_per_seat) / votes_per_seat
+            self.seat_influence[idx] = (
+                poll_result % votes_per_seat) / votes_per_seat
 
         most_votes = np.max(self.polls)
         self.chances = np.zeros(Election.NR_OF_PARTIES)
@@ -148,4 +153,3 @@ class Election:
             self.chances[idx] = 1 - dist.cdf(most_votes)
             # self.chances[idx] = 1                         ## Uncomment to disable strategic voting
         return
-
