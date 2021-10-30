@@ -105,7 +105,6 @@ class Election:
 
     def init_voters(self, max_swing):
         """Initialises voters based on the polls"""
-        self.swing = max_swing
         Voter.set_switches()
         voters = [Voter(i, self.parties, max_swing) for i in range(len(self.polls)) for j in range(int(self.polls[i]))]
         return voters
@@ -113,19 +112,16 @@ class Election:
     def determine_possible_coalitions(self, numbers, partial = {}):
         s = sum(list(partial.values()))
         # check if the partial makes up more than 50\% of seats
-        if s >= 0.5 and partial not in self.coalitions and len(partial) <= 5: 
-            #print("sum(%s)>%s" % (list(partial.values()), 0.5))
-            self.coalitions.append(partial)
-            print(self.coalitions)
+        if s >= 0.5 and partial not in self.coalitions:
+            self.coalitions.append(list(partial.keys()))
         for i, (party, num) in enumerate(numbers.items()):
             remaining = {party:num for party, num in zip(list(numbers.keys())[i+1:], list(numbers.values())[i+1:])}
             partial_copy = partial.copy()
             partial_copy[party] = num
-            if len(partial_copy) > 5:
+            if len(partial_copy) > 5: # No more than 5 parties are allowed in a coalition
                 return
             else:
                 self.determine_possible_coalitions(remaining, partial_copy) 
-
     def calculate_chance_to_influence(self):
         """ 
             Calculates the expected chance of a vote to make a difference, based upon the parties poll rankings, 
