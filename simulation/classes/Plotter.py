@@ -11,9 +11,10 @@ class Plotter:
         x = [party[0] for party in parties_2d]
         y = [party[1] for party in parties_2d]
         fig, ax = plt.subplots()
-        line = ax.scatter(x=x, y=y)
+        line = ax.scatter(x=x, y=y, s=0)
         for i, (x0, y0) in enumerate(zip(x, y)):
-            img = OffsetImage(plt.imread(hydra.utils.get_original_cwd() + os.path.sep + 'party_logos' + os.path.sep + str(i) + '.png'), zoom=0.1)
+        #     plt.text(x0,y0,i, ha="center", va="center")
+            img = OffsetImage(plt.imread(hydra.utils.get_original_cwd() + os.path.sep + 'party_logos' + os.path.sep + str(i) + '.png'), zoom=0.2)
             ab = AnnotationBbox(img, (x0, y0), frameon=False)
             ax.add_artist(ab)
 

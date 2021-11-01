@@ -44,8 +44,8 @@ class Election:
         self.poll_uncertainty = cfg.uncertainty
         self.polls = np.array(cfg.polls.distribution) * cfg.polls.voters
         self.parties = self.init_parties()
-        # plotter = Plotter()
-        # plotter.plot_parties_2d(self.parties)
+        plotter = Plotter()
+        plotter.plot_parties_2d(self.parties)
         self.coalitions = []
         print("Computing all possible coalitions...")
         self.determine_possible_coalitions(
