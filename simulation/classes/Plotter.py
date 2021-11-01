@@ -6,6 +6,7 @@ class Plotter:
     
 
     def plot_parties_2d(self, parties):
+        return
         pca = PCA(n_components=2)
         parties_2d = pca.fit_transform(parties)
         x = [party[0] for party in parties_2d]

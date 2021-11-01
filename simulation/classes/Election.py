@@ -50,12 +50,8 @@ class Election:
 
         norm_polls = self.polls / cfg.polls.voters 
 
-        Coalition.party_vectors = self.parties
         self.coalitions = Coalition.init_coalitions(self.parties, norm_polls)
-        # self.coalitions = []
-        # print("Computing all possible coalitions...")
-        # self.determine_possible_coalitions(
-        #     numbers={i: num for i, num in enumerate(self.polls/cfg.polls.voters)})
+
         self.voters = self.init_voters(cfg.swing)
         self.calculate_chance_to_influence()
         self.strategic_vote_count = 0
