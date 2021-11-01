@@ -15,7 +15,7 @@ class Coalition:
         self.profile = self.coalition_profile()
 
 
-    def coalition_profile(self):
+    def coalition_profile(self) -> numpy.ndarray:
         profile = []
         if len(self.parties) == 1:
             return self.parties[0]
@@ -28,13 +28,10 @@ class Coalition:
         return numpy.asarray(profile)
 
 
-    def coalition_feasibility(self, parties):
-        similarities = []
-        for idx, i in enumerate(parties[:-1]):
-            for j in parties[idx+1:]:
-                similarities.append(cosine_similarity(Coalition.party_vectors[j], Coalition.party_vectors[i]))
+    def coalition_feasibility(self, parties: list) -> float:
+        return average([cosine_similarity(Coalition.party_vectors[j], Coalition.party_vectors[i]) for idx, i in enumerate(parties[:-1])\
+                                                                                                  for j      in parties[idx+1:]])
 
-        return average(similarities)
 
     def __str__(self) -> str:
         return str(self.parties) + "\t" + str(self.feasibility)
@@ -55,7 +52,6 @@ class Coalition:
         if cur_idx != 0:
           return coalitions
 
-        coalitions.append([29, 29, 29])
         new_coalitions = []
         for coalition in coalitions:
             coal_polls = [polls[party] for party in coalition]
@@ -65,7 +61,6 @@ class Coalition:
         new_coalitions.sort(key=lambda x:x.feasibility, reverse=True)
         for coalition in new_coalitions:
             print(coalition)
-        exit(0)
 
         return new_coalitions
 
