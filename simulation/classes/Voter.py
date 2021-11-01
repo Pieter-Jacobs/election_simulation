@@ -43,9 +43,8 @@ class Voter:
         self.party = np.argmax(self.similarities)
 
     def vote(self, polls, parties, seats, coalitions):
-        coalition_scores = [self.compute_coalition_score(coalitions, party) for party in range(len(parties))]
-        print(coalition_scores)
-        print(self.party)
+        # coalition_scores = [self.compute_coalition_score(coalitions, party) for party in range(len(parties))]
+        coalition_scores = self.compute_coalition_score(coalitions)
         scores = self.similarities * ((1 - self.importance_of_seats) * polls + (self.importance_of_seats * seats))
         party = np.argmax(scores)
         Voter.switches[self.party][party] += 1
@@ -79,18 +78,21 @@ class Voter:
         cos_sim_matrix = np.array([[cosine_similarity(parties[j], parties[i]) for i in range(len(parties))] for j in range(len(parties))])
         return cos_sim_matrix
 
-    def compute_coalition_score(self, coalitions, party):
-        coalitions = [coalition for coalition in coalitions if party in coalition]
-        feasibility = 0 
-        preference = 0
-        for coalition in coalitions: 
-            for i, party_1 in enumerate(coalition[:len(coalition)-1]):
-                preference += self.similarities[party_1]
-                for party_2 in coalition[i+1:]:
-                    feasibility += self.party_similarities[party_1][party_2]
-        if len(coalitions) == 0:
-            return 0 
-        return feasibility * preference
+    def compute_coalition_score(self, coalitions):
+        # coalitions = [coalition for coalition in coalitions if party in coalition]
+        # feasibility = 0 
+        # preference = 0
+        # for coalition in coalitions: 
+        #     for i, party_1 in enumerate(coalition[:len(coalition)-1]):
+        #         preference += self.similarities[party_1]
+        #         for party_2 in coalition[i+1:]:
+        #             feasibility += self.party_similarities[party_1][party_2]
+        # if len(coalitions) == 0:
+        #     return 0 
+        # return feasibility * preference
+        return [cosine_similarity(self.position, coalition.profile) for coalition in coalitions]
+
+
 
     @staticmethod
     def switch_matrix() -> str:

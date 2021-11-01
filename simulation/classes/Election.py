@@ -4,6 +4,7 @@ from classes.Plotter import Plotter
 import numpy as np
 import statistics as stat
 from helpers import *
+from classes.Coalition import Coalition
 
 
 class Election:
@@ -46,10 +47,15 @@ class Election:
         self.parties = self.init_parties()
         plotter = Plotter()
         plotter.plot_parties_2d(self.parties)
-        self.coalitions = []
-        print("Computing all possible coalitions...")
-        self.determine_possible_coalitions(
-            numbers={i: num for i, num in enumerate(self.polls/cfg.polls.voters)})
+
+        norm_polls = self.polls / cfg.polls.voters 
+
+        Coalition.party_vectors = self.parties
+        self.coalitions = Coalition.init_coalitions(self.parties, norm_polls)
+        # self.coalitions = []
+        # print("Computing all possible coalitions...")
+        # self.determine_possible_coalitions(
+        #     numbers={i: num for i, num in enumerate(self.polls/cfg.polls.voters)})
         self.voters = self.init_voters(cfg.swing)
         self.calculate_chance_to_influence()
         self.strategic_vote_count = 0
