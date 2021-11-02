@@ -7,3 +7,4 @@ n_seats: 150
 max_swing: 0.5
 governmental_preference: 0.5
 political_preference: 0.5
+feasibility: 0.1

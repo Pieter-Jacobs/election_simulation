@@ -8,6 +8,8 @@ def main(cfg: DictConfig):
     np.random.seed(cfg.seed)
     election = Election(n_seats=cfg.n_seats,
                         n_voters=cfg.n_voters, polls=cfg.polls.distribution, max_swing=cfg.max_swing)
+    election.start()
+
 
 if __name__ == "__main__":
     main()
