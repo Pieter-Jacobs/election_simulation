@@ -1,8 +1,9 @@
 from typing import Mapping
 from imports import *
 
+
 class Party(object):
-    def __init__(self, profile, polled_votes, mapping) -> None:
+    def __init__(self, profile: list, polled_votes: list, mapping: int) -> None:
         self.profile = profile
         self.polled_votes = polled_votes
         self.mapping = mapping

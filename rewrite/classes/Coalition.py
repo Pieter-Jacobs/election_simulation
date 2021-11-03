@@ -21,7 +21,7 @@ class Coalition(object):
 
     def __str__(self) -> str:
         parties = "["
-        for party in self.parties: 
+        for party in self.parties:
             parties += str(party) + ", "
         parties = parties[:-2] + "]"
         return parties
@@ -45,4 +45,3 @@ class Coalition(object):
         profile = [np.average([party.profile[idx] for party in self.parties],
                               weights=self.polls) for idx in range(vector_length)]
         return profile
-

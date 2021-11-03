@@ -11,4 +11,3 @@ def cosine_similarity(v1, v2):
         sumxy += x*y
 
     return sumxy/((sumxx**0.5)*(sumyy**0.5))
-

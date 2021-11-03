@@ -6,13 +6,13 @@ import numpy as np
 
 
 class Election(object):
-    def __init__(self, n_seats, n_voters, polls, max_swing) -> None:
+    def __init__(self, n_seats: int, n_voters: int, polls: DictConfig, upper_swing: float) -> None:
         super().__init__()
         self.n_seats = n_seats
         self.n_voters = n_voters
         self.polls = np.array(polls)
         self.parties = self.create_parties()
-        self.voters = self.create_voters(max_swing)
+        self.voters = self.create_voters(upper_swing)
         self.coalitions = self.create_coalitions()
 
     def start(self):
@@ -21,19 +21,15 @@ class Election(object):
         votes = {i: 0 for i in range(n_parties)}
         vote_switches = [[0 for _ in range(n_parties)]
                          for _ in range(n_parties)]
-
         for voter in self.voters:
             vote = voter.vote(parties=self.parties, coalitions=self.coalitions,
                               residual_seats=self.compute_residual_seats())
             votes[vote.mapping] += 1
             vote_switches[voter.party.mapping][vote.mapping] += 1
             strategic_vote_count += voter.party == vote
-        #strategic_vote_count = sum([vote for i, party_switches in enumerate(vote_switches) for j, vote in enumerate(party_switches) if i != j])
-        results = {k: (v / len(self.voters)) * 100 for k, v in votes.items()}
+        results = {k: (v / len(self.voters)) for k, v in votes.items()}
         results_seats = {k: (v * self.n_seats) for k, v in results.items()}
-        print(results)
-        print(strategic_vote_count)
-        pass
+        return list(results_seats.values()), vote_switches, (strategic_vote_count / sum(votes.values())) * 100
 
     def compute_residual_seats(self) -> list:
         seats = self.polls * self.n_seats
@@ -46,10 +42,9 @@ class Election(object):
                    for i, (profile, polled_votes) in enumerate(zip(profiles, self.polls))]
         return parties
 
-    def create_voters(self, max_swing) -> list:
-        voters = [Voter(initial_party=self.parties[i], parties=self.parties, max_swing=max_swing) for i in range(len(self.polls))
+    def create_voters(self, upper_swing: float) -> list:
+        voters = [Voter(initial_party=self.parties[i], parties=self.parties, upper_swing=upper_swing) for i in range(len(self.polls))
                   for j in range(int(self.polls[i]*self.n_voters))]
-        print(len(voters))
         return voters
 
     def create_coalitions(self) -> list:
