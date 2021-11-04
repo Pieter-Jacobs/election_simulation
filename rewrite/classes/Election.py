@@ -26,7 +26,7 @@ class Election(object):
                               residual_seats=self.compute_residual_seats())
             votes[vote.mapping] += 1
             vote_switches[voter.party.mapping][vote.mapping] += 1
-            strategic_vote_count += voter.party == vote
+            strategic_vote_count += voter.party != vote
         results = {k: (v / len(self.voters)) for k, v in votes.items()}
         results_seats = {k: (v * self.n_seats) for k, v in results.items()}
         return list(results_seats.values()), vote_switches, (strategic_vote_count / sum(votes.values())) * 100
