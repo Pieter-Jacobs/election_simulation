@@ -86,8 +86,8 @@ def plot_barplot(folder_path: str, save_folder: str, n_runs: int, filename: str,
     for swing, result, stdev in zip(x, y, stdevs):
         plt.figure(figsize=(16, 9)) 
         fig, ax = plt.subplots() 
-        plt.barh(party_mappings, result, xerr=stdev,
-                align='center', alpha=0.5, ecolor='black', capsize=5)
+        plt.barh(party_mappings, result,
+                align='center', alpha=0.5, ecolor='black', xerr=stdev, capsize=5)
         for i, v in enumerate(result):
             ax.text(v - v/2, i-0.25, str(v), color='black', fontweight='bold')
         plt.yticks(party_mappings)
@@ -101,25 +101,25 @@ def plot_barplot(folder_path: str, save_folder: str, n_runs: int, filename: str,
         plt.clf()
 
 
-def plot_happiness(folder_path, save_folder, upper_swing, poll_nr) -> None:
+def plot_happiness(folder_path, save_folder, upper_swing, poll) -> None:
     happiness = []
     x = []
 
     for swing in range(0, int(10 * upper_swing) + 1):
         x.append(swing/ 10)
-        path = folder_path + "2021_swing_" + to_str(swing/10) + "_poll_" + str(poll_nr)
+        path = folder_path + "2021_swing_" + to_str(swing/10) + "_poll_" + str(poll)
         happiness.append(read_float_from_file(path))
     plt.plot(x, happiness)
     plt.title("Swing vs Happiness")
     plt.xlabel(r"$s^\uparrow$")
     plt.ylabel("Happiness")
-    plt.savefig(f"{save_folder}happiness{os.sep}_swing_{swing}_poll_{poll_nr}.pdf")
+    plt.savefig(f"{save_folder}happiness{os.sep}_swing_{swing}_poll_{poll}.pdf")
 
 @hydra.main(config_path="conf", config_name="config.yaml")
 def main(cfg: DictConfig):
     figure_folder = hydra.utils.get_original_cwd() + os.path.sep + "img" + \
         os.sep + "figures" + os.sep
-    data_folder = hydra.utils.get_original_cwd() + os.sep + "data" + os.sep
+    data_folder = hydra.utils.get_original_cwd() + os.sep + "data copy" + os.sep
     for poll in range(cfg.n_polls):
         plot_strategic_voting(folder_path=data_folder
                                 + "strategic_voting_stats", n_runs=cfg.n_runs, save_folder=figure_folder, filename="first_election", poll=poll)
@@ -130,7 +130,7 @@ def main(cfg: DictConfig):
         plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
         plot_parties_2d(filename="profiles_text",
                         save_folder=figure_folder, logos=False)
-        plot_happiness(data_folder + "/happiness/", figure_folder, cfg.upper_swing)
+        #plot_happiness(data_folder + "happiness" + os.sep, figure_folder, cfg.upper_swing, poll=poll)
 
 
 if __name__ == "__main__":
