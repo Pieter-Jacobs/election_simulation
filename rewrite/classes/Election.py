@@ -37,7 +37,6 @@ class Election(object):
         for party in self.parties:
             party.polled_votes = self.polls[party.mapping]
 
-        print(f"Poll length = {len(self.polls)}")
         return list(seats.values()), vote_switches, (strategic_vote_count / sum(votes.values())) * 100
 
     def compute_residual_seats(self) -> list:

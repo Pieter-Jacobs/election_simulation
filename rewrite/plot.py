@@ -74,19 +74,21 @@ def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_polls: int, 
             r"Voting Distribution for $s^{\uparrow}$ of " + str(round(swing, 1)))
         plt.savefig(save_folder + "heatmaps" + os.sep +
                     filename + "__swing__" + str(swing) + ".pdf")
+        plt.clf()
 
 
 def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: str, n_polls: int) -> None:
     x, y, stdevs = average_results(folder_path, n_runs, n_polls, type="list")
     party_mappings = [i for i in range(0, len(y[0]))]
     for swing, result, stdev in zip(x, y, stdevs):
-        plt.barh(party_mappings, [int(seat) for seat in result], yerr=stdev,
-                align='center', alpha=0.5, ecolor='black', capsize=10)
-        plt.xticks(party_mappings)
+        n_seats = int(sum(result))
+        plt.barh(party_mappings, result, xerr=stdev,
+                align='center', alpha=0.5, ecolor='black', capsize=5)
+        plt.yticks(party_mappings)
         plt.title(
             r"Seat Distribution for $s^{\uparrow}$ of " + str(round(swing, 1)))
-        plt.xlabel("Party")
-        plt.ylabel("Number of seats")
+        plt.ylabel("Party")
+        plt.xlabel("Number of seats")
         plt.savefig(save_folder + "bargraphs" + os.sep +
                     filename + "__swing__" + str(swing) + ".pdf")
 
@@ -96,15 +98,15 @@ def main(cfg: DictConfig):
     figure_folder = hydra.utils.get_original_cwd() + os.path.sep + "img" + \
         os.sep + "figures" + os.sep
     data_folder = hydra.utils.get_original_cwd() + os.sep + "data" + os.sep
-    plot_strategic_voting(folder_path=data_folder
-                          + "strategic_voting_stats", n_runs=cfg.n_runs, save_folder=figure_folder, filename="first_election", n_polls=cfg.n_polls)
-    plot_heatmap(folder_path=data_folder
-                 + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_runs, save_folder=figure_folder, filename="first_heatmap", n_polls=cfg.n_polls)
+    # plot_strategic_voting(folder_path=data_folder
+    #                       + "strategic_voting_stats", n_runs=cfg.n_runs, save_folder=figure_folder, filename="first_election", n_polls=cfg.n_polls)
+    # plot_heatmap(folder_path=data_folder
+    #              + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_runs, save_folder=figure_folder, filename="first_heatmap", n_polls=cfg.n_polls)
     plot_histogram(folder_path=data_folder
                    + "election_results", save_folder=figure_folder, n_runs=cfg.n_runs, filename="first_histogram", n_polls=cfg.n_polls)
-    plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
-    plot_parties_2d(filename="profiles_text",
-                    save_folder=figure_folder, logos=False)
+    # plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
+    # plot_parties_2d(filename="profiles_text",
+    #                 save_folder=figure_folder, logos=False)
 
 
 if __name__ == "__main__":
