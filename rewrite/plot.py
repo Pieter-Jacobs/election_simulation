@@ -7,22 +7,21 @@ def to_str(number: float) -> str:
     return str(round(number, 1))
 
 
-def average_results(folder_path: str, n_runs: int, n_polls: int, type: str) -> None:
+def average_results(folder_path: str, n_runs: int, type: str, poll: int) -> None:
     x = [x for x in np.arange(0, 1.1, 0.1)]
     y = []
     stdevs = []
     for s in x:
         values = []
         for run in range(n_runs):
-            for poll in range(n_polls):
-                path = folder_path + os.sep + "2021" + "_swing_" + \
-                    to_str(s) + "_run_" + str(run) + "_poll_" + str(poll)
-                if type == 'float':
-                    values.append(read_float_from_file(path))
-                elif type == 'matrix':
-                    values.append(read_matrix_from_file(path))
-                elif type == 'list':
-                    values.append(read_list_from_file(path))
+            path = folder_path + os.sep + "2021" + "_swing_" + \
+                to_str(s) + "_run_" + str(run) + "_poll_" + str(poll)
+            if type == 'float':
+                values.append(read_float_from_file(path))
+            elif type == 'matrix':
+                values.append(read_matrix_from_file(path))
+            elif type == 'list':
+                values.append(read_list_from_file(path))
         stdev = np.std(values) if type == "float" else np.std(values, axis=0)
         stdevs.append(stdev)
         y.append(sum(values)/n_runs)
@@ -51,8 +50,8 @@ def plot_parties_2d(filename: str, save_folder: str, logos=True) -> None:
     plt.savefig(save_folder + "party_profiles" + os.sep + filename + ".pdf")
 
 
-def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, n_polls: int, filename: str) -> None:
-    x, y, stdevs = average_results(folder_path, n_runs, n_polls, type='float')
+def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int) -> None:
+    x, y, stdevs = average_results(folder_path, n_runs, poll=poll, type='float')
     plt.plot(x, y)
     plt.title("Swing vs Strategic votes")
     plt.xlabel(r"$s^\uparrow$")
@@ -62,8 +61,8 @@ def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, n_pol
     plt.savefig(save_folder + "linegraphs" + os.sep + filename + ".pdf")
 
 
-def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_polls: int, n_voters: int, filename: str) -> None:
-    x, y, _ = average_results(folder_path, n_runs, n_polls, type="matrix")
+def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_voters: int, filename: str, poll: int) -> None:
+    x, y, _ = average_results(folder_path, n_runs, poll=poll, type="matrix")
     for swing, matrix in zip(x, y):
         seaborn.heatmap((matrix/n_voters) * 100, vmin=0, vmax=100, cmap="vlag", cbar_kws={"label": "Percentage of voters"})
         plt.xlabel("Voted For")
@@ -75,8 +74,8 @@ def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_polls: int, 
         plt.clf()
 
 
-def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: str, n_polls: int) -> None:
-    x, y, stdevs = average_results(folder_path, n_runs, n_polls, type="list")
+def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int) -> None:
+    x, y, stdevs = average_results(folder_path, n_runs, poll=poll, type="list")
     party_mappings = [i for i in range(0, len(y[0]))]
     for swing, result, stdev in zip(x, y, stdevs):
         plt.figure(figsize=(16, 9)) 
@@ -116,16 +115,17 @@ def main(cfg: DictConfig):
     figure_folder = hydra.utils.get_original_cwd() + os.path.sep + "img" + \
         os.sep + "figures" + os.sep
     data_folder = hydra.utils.get_original_cwd() + os.sep + "data" + os.sep
-#   plot_strategic_voting(folder_path=data_folder
-#                         + "strategic_voting_stats", n_runs=cfg.n_runs, save_folder=figure_folder, filename="first_election", n_polls=cfg.n_polls)
-#   plot_heatmap(folder_path=data_folder
-#                + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_runs, save_folder=figure_folder, filename="first_heatmap", n_polls=cfg.n_polls)
-#   plot_histogram(folder_path=data_folder
-#                  + "election_results", save_folder=figure_folder, n_runs=cfg.n_runs, filename="first_histogram", n_polls=cfg.n_polls)
-#   plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
-#   plot_parties_2d(filename="profiles_text",
-#                   save_folder=figure_folder, logos=False)
-    plot_happiness(data_folder + "/happiness/", figure_folder, cfg.upper_swing)
+    for poll in cfg.n_polls:
+        plot_strategic_voting(folder_path=data_folder
+                                + "strategic_voting_stats", n_runs=cfg.n_runs, save_folder=figure_folder, filename="first_election", poll=poll)
+        plot_heatmap(folder_path=data_folder
+                    + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_runs, save_folder=figure_folder, filename="first_heatmap", poll=poll)
+        plot_histogram(folder_path=data_folder
+                        + "election_results", save_folder=figure_folder, n_runs=cfg.n_runs, filename="first_histogram", poll=poll)
+        plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
+        plot_parties_2d(filename="profiles_text",
+                        save_folder=figure_folder, logos=False)
+        plot_happiness(data_folder + "/happiness/", figure_folder, cfg.upper_swing)
 
 
 if __name__ == "__main__":
