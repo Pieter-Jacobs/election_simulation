@@ -3,7 +3,7 @@ defaults:
   - polls: '2021'
 n_runs: 1
 n_polls: 2
-n_voters: 10000
+n_voters: 300
 n_seats: 150
 upper_swing: 0.5
 governmental_preference: 0.5

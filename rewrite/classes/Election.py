@@ -21,7 +21,9 @@ class Election(object):
         votes = {i: 0 for i in range(n_parties)}
         vote_switches = [[0 for _ in range(n_parties)]
                          for _ in range(n_parties)]
-        for voter in self.voters:
+        for idx, voter in enumerate(self.voters):
+            if idx % (self.n_voters / 10) == 0:
+                print(idx)
             vote = voter.vote(parties=self.parties, coalitions=self.coalitions,
                               residual_seats=self.compute_residual_seats())
             votes[vote.mapping] += 1
@@ -29,7 +31,13 @@ class Election(object):
             strategic_vote_count += voter.party != vote
         seats = self.determine_seats(votes)
 
-        self.polls = [v / self.n_voters for v in votes.values()]
+        for k, v in votes.items():
+            self.polls[k] = v / self.n_voters
+        # update polled votes for parties 
+        for party in self.parties:
+            party.polled_votes = self.polls[party.mapping]
+
+        print(f"Poll length = {len(self.polls)}")
         return list(seats.values()), vote_switches, (strategic_vote_count / sum(votes.values())) * 100
 
     def compute_residual_seats(self) -> list:

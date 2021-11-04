@@ -56,7 +56,7 @@ class Voter(object):
                 scores.append(0)
                 continue
 
-            scores.append(max([cosine_similarity(self.profile, coalition.profile) for coalition in coalitions_with_party]))
+            scores.append(max([cosine_similarity(self.profile, coalition.profile) * coalition.feasibility for coalition in coalitions_with_party]))
               # weights=[coalition.feasibility for coalition in coalitions_with_party]))
 
         Voter.coal_scores[np.argmax(scores)] += 1
