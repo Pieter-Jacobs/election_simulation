@@ -39,7 +39,7 @@ def plot_parties_2d(filename: str, save_folder: str, logos=True) -> None:
     profiles_2d = pca.fit_transform(party_profiles)
     x = [profile[0] for profile in profiles_2d]
     y = [profile[1] for profile in profiles_2d]
-    _, ax = plt.subplots()
+    fig, ax = plt.subplots()
     plt.title("Party profiles")
     line = ax.scatter(x=x, y=y, s=0)
     for i, (x0, y0) in enumerate(zip(x, y)):
@@ -50,6 +50,7 @@ def plot_parties_2d(filename: str, save_folder: str, logos=True) -> None:
             ax.add_artist(ab)
         else:
             plt.text(x0, y0, i, ha="center", va="center")
+    fig.set_size_inches(16, 9)
     plt.savefig(save_folder + "party_profiles" + os.sep + filename + ".pdf")
 
 
@@ -82,6 +83,7 @@ def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: st
     party_mappings = [i for i in range(0, len(y[0]))]
     for swing, result, stdev in zip(x, y, stdevs):
         n_seats = int(sum(result))
+        plt.figure(figsize=(16, 9)) 
         plt.barh(party_mappings, result, xerr=stdev,
                 align='center', alpha=0.5, ecolor='black', capsize=5)
         plt.yticks(party_mappings)
@@ -89,6 +91,7 @@ def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: st
             r"Seat Distribution for $s^{\uparrow}$ of " + str(round(swing, 1)))
         plt.ylabel("Party")
         plt.xlabel("Number of seats")
+        plt.show()
         plt.savefig(save_folder + "bargraphs" + os.sep +
                     filename + "__swing__" + str(swing) + ".pdf")
 
@@ -104,9 +107,9 @@ def main(cfg: DictConfig):
     #              + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_runs, save_folder=figure_folder, filename="first_heatmap", n_polls=cfg.n_polls)
     plot_histogram(folder_path=data_folder
                    + "election_results", save_folder=figure_folder, n_runs=cfg.n_runs, filename="first_histogram", n_polls=cfg.n_polls)
-    # plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
-    # plot_parties_2d(filename="profiles_text",
-    #                 save_folder=figure_folder, logos=False)
+    plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
+    plot_parties_2d(filename="profiles_text",
+                    save_folder=figure_folder, logos=False)
 
 
 if __name__ == "__main__":
