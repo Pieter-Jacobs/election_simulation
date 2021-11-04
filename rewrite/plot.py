@@ -13,13 +13,10 @@ def average_results(folder_path: str, n_runs: int, n_polls: int, type: str) -> N
     stdevs = []
     for s in x:
         values = []
-        # if s == 0 or s == 1:
-        #     s = int(s)
         for run in range(n_runs):
             for poll in range(n_polls):
                 path = folder_path + os.sep + "2021" + "_swing_" + \
                     to_str(s) + "_run_" + str(run) + "_poll_" + str(poll)
-                    # str(round(s, 1)) + "_run_" + str(run) + "_poll_" + str(poll)
                 if type == 'float':
                     values.append(read_float_from_file(path))
                 elif type == 'matrix':
@@ -68,7 +65,7 @@ def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, n_pol
 def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_polls: int, n_voters: int, filename: str) -> None:
     x, y, _ = average_results(folder_path, n_runs, n_polls, type="matrix")
     for swing, matrix in zip(x, y):
-        seaborn.heatmap((matrix/n_voters) * 100, vmin=0, vmax=100, cmap="vlag")
+        seaborn.heatmap((matrix/n_voters) * 100, vmin=0, vmax=100, cmap="vlag", cbar_kws={"label": "Percentage of voters"})
         plt.xlabel("Voted For")
         plt.ylabel("Original Party")
         plt.suptitle(
@@ -82,7 +79,6 @@ def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: st
     x, y, stdevs = average_results(folder_path, n_runs, n_polls, type="list")
     party_mappings = [i for i in range(0, len(y[0]))]
     for swing, result, stdev in zip(x, y, stdevs):
-        n_seats = int(sum(result))
         plt.figure(figsize=(16, 9)) 
         plt.barh(party_mappings, result, xerr=stdev,
                 align='center', alpha=0.5, ecolor='black', capsize=5)
@@ -96,20 +92,35 @@ def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: st
                     filename + "__swing__" + str(swing) + ".pdf")
 
 
+def plot_happiness(folder_path, save_folder, upper_swing) -> None:
+    happiness = []
+    x = []
+
+    for swing in range(0, int(10 * upper_swing) + 1):
+        x.append(swing/ 10)
+        path = folder_path + "2021_swing_" + to_str(swing/10)
+        happiness.append(read_float_from_file(path))
+    plt.plot(x, happiness)
+    plt.title("Swing vs Happiness")
+    plt.xlabel(r"$s^\uparrow$")
+    plt.ylabel("Happiness")
+    plt.savefig(save_folder + "happiness" + os.sep + "happiness.pdf")
+
 @hydra.main(config_path="conf", config_name="config.yaml")
 def main(cfg: DictConfig):
     figure_folder = hydra.utils.get_original_cwd() + os.path.sep + "img" + \
         os.sep + "figures" + os.sep
     data_folder = hydra.utils.get_original_cwd() + os.sep + "data" + os.sep
-    # plot_strategic_voting(folder_path=data_folder
-    #                       + "strategic_voting_stats", n_runs=cfg.n_runs, save_folder=figure_folder, filename="first_election", n_polls=cfg.n_polls)
-    # plot_heatmap(folder_path=data_folder
-    #              + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_runs, save_folder=figure_folder, filename="first_heatmap", n_polls=cfg.n_polls)
-    plot_histogram(folder_path=data_folder
-                   + "election_results", save_folder=figure_folder, n_runs=cfg.n_runs, filename="first_histogram", n_polls=cfg.n_polls)
-    plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
-    plot_parties_2d(filename="profiles_text",
-                    save_folder=figure_folder, logos=False)
+#   plot_strategic_voting(folder_path=data_folder
+#                         + "strategic_voting_stats", n_runs=cfg.n_runs, save_folder=figure_folder, filename="first_election", n_polls=cfg.n_polls)
+#   plot_heatmap(folder_path=data_folder
+#                + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_runs, save_folder=figure_folder, filename="first_heatmap", n_polls=cfg.n_polls)
+#   plot_histogram(folder_path=data_folder
+#                  + "election_results", save_folder=figure_folder, n_runs=cfg.n_runs, filename="first_histogram", n_polls=cfg.n_polls)
+#   plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
+#   plot_parties_2d(filename="profiles_text",
+#                   save_folder=figure_folder, logos=False)
+    plot_happiness(data_folder + "/happiness/", figure_folder, cfg.upper_swing)
 
 
 if __name__ == "__main__":

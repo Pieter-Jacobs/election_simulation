@@ -13,6 +13,7 @@ class Election(object):
         self.polls = np.array(polls)
         self.parties = self.create_parties()
         self.voters = self.create_voters(upper_swing)
+        self.coalition = None
 
     def start(self):
         self.coalitions = self.create_coalitions()
@@ -24,11 +25,13 @@ class Election(object):
         for idx, voter in enumerate(self.voters):
             if idx % (self.n_voters / 10) == 0:
                 print(idx)
+
             vote = voter.vote(parties=self.parties, coalitions=self.coalitions,
                               residual_seats=self.compute_residual_seats())
             votes[vote.mapping] += 1
             vote_switches[voter.party.mapping][vote.mapping] += 1
-            strategic_vote_count += voter.party != vote
+            strategic_vote_count += voter.voted_strategic()
+
         seats = self.determine_seats(votes)
 
         for k, v in votes.items():
@@ -73,10 +76,11 @@ class Election(object):
         return voters
 
     def create_coalitions(self) -> list:
-        coalitions = self.find_coalitions()
-        coalitions.sort(
+        self.coalitions = self.find_coalitions()
+        self.coalitions.sort(
             key=lambda coalition: coalition.feasibility, reverse=True)
-        return coalitions
+        
+        return self.coalitions
 
     def find_coalitions(self, current_parties=[], current_idx=0) -> list:
         polls = [party.polled_votes for party in current_parties]
@@ -93,3 +97,13 @@ class Election(object):
                 current_parties + [self.parties[current_idx]], current_idx + 1)
 
         return coalitions
+    
+
+    # Find most feasible coalition
+    def most_feasible_coalition(self) -> Coalition:
+        return max(self.coalitions, key=lambda coalition: coalition.feasibility)
+
+    # Find average happiness of all voters
+    def average_happiness(self) -> float:
+        coalition = self.most_feasible_coalition()
+        return average([voter.compute_happiness(coalition) for voter in self.voters if voter.voted_strategic()])
