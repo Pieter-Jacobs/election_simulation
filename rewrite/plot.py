@@ -48,6 +48,7 @@ def plot_parties_2d(filename: str, save_folder: str, logos=True) -> None:
             plt.text(x0, y0, i, ha="center", va="center")
     fig.set_size_inches(16, 9)
     plt.savefig(save_folder + "party_profiles" + os.sep + filename + ".pdf")
+    plt.clf()
 
 
 def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int) -> None:
@@ -59,6 +60,7 @@ def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, filen
     plt.ylim([0, 100])
     plt.errorbar(x, y, stdevs)
     plt.savefig(save_folder + "linegraphs" + os.sep + filename + ".pdf")
+    plt.clf()
 
 
 def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_voters: int, filename: str, poll: int) -> None:
@@ -91,9 +93,9 @@ def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: st
         plt.ylabel("Party")
         plt.xlabel("Number of seats")
         fig.set_size_inches(16, 9)
-        plt.show()
         plt.savefig(save_folder + "bargraphs" + os.sep +
                     filename + "__swing__" + str(swing) + ".pdf")
+        plt.clf()
 
 
 def plot_happiness(folder_path, save_folder, upper_swing) -> None:
