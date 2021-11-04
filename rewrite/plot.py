@@ -74,7 +74,7 @@ def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: st
     x, y, stdevs = average_results(folder_path, n_runs, type="list")
     party_mappings = [i for i in range(0, len(y[0]))]
     for swing, result, stdev in zip(x, y, stdevs):
-        plt.bar(party_mappings, [int(seat) for seat in result], yerr=stdev,
+        plt.barh(party_mappings, [int(seat) for seat in result], yerr=stdev,
                 align='center', alpha=0.5, ecolor='black', capsize=10)
         plt.xticks(party_mappings)
         plt.title(
