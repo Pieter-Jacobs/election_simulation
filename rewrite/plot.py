@@ -49,7 +49,7 @@ def plot_parties_2d(filename: str, save_folder: str, logos=True) -> None:
             plt.text(x0, y0, i, ha="center", va="center")
     fig.set_size_inches(16, 9)
     plt.savefig(save_folder + "party_profiles" + os.sep + filename + confg.polls.name + ".pdf")
-    plt.clf()
+    plt.close()
 
 
 def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int) -> None:
@@ -60,8 +60,8 @@ def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, filen
     plt.ylabel("Strategic voting percentage")
     plt.ylim([0, 100])
     plt.errorbar(x, y, stdevs)
-    plt.savefig(save_folder + "linegraphs" + os.sep + filename + confg.polls.name + ".pdf")
-    plt.clf()
+    plt.savefig(save_folder + "linegraphs" + os.sep + filename + confg.polls.name + '_' + str(poll) + ".pdf")
+    plt.close()
 
 
 def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_voters: int, filename: str, poll: int) -> None:
@@ -78,7 +78,7 @@ def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_voters: int,
             r"Voting Distribution for $s^{\uparrow}$ of " + str(round(swing, 1)))
         plt.savefig(save_folder + "heatmaps" + os.sep +
                     filename + "__swing__" + str(swing) + confg.polls.name + ".pdf")
-        plt.clf()
+        plt.close()
 
 
 def plot_barplot(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int) -> None:
@@ -99,7 +99,7 @@ def plot_barplot(folder_path: str, save_folder: str, n_runs: int, filename: str,
         fig.set_size_inches(16, 9)
         plt.savefig(save_folder + "bargraphs" + os.sep +
                     filename + "__swing__" + str(swing) + confg.polls.name + ".pdf")
-        plt.clf()
+        plt.close()
 
 
 def plot_happiness(folder_path, save_folder, upper_swing, poll_nr) -> None:
@@ -115,6 +115,7 @@ def plot_happiness(folder_path, save_folder, upper_swing, poll_nr) -> None:
     plt.xlabel(r"$s^\uparrow$")
     plt.ylabel("Happiness")
     plt.savefig(f"{save_folder}happiness{os.sep}_swing_{swing}_poll_{confg.polls.name}_{poll_nr}.pdf")
+    plt.close()
 
 @hydra.main(config_path="conf", config_name="config.yaml")
 def main(cfg: DictConfig):
