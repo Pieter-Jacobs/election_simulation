@@ -23,7 +23,7 @@ def average_results(folder_path: str, n_runs: int, type: str, poll: int) -> None
                 values.append(read_matrix_from_file(path))
             elif type == 'list':
                 values.append(read_list_from_file(path))
-        stdev = np.std(values) if type == "float" else np.std(values, axis=0)
+        stdev = np.std(values) if type == "float" else np.std(values, axis=0, ddof=1)
         stdevs.append(stdev)
         y.append(sum(values)/n_runs)
     return x, y, stdevs
@@ -70,7 +70,7 @@ def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_voters: int,
         for i in range(len(matrix)):
             row_votes = np.sum(matrix[i])
             matrix[i] = ((matrix[i]/row_votes) * 100) if row_votes > 0 else 0
-        seaborn.set(font_scale=1.4)
+        seaborn.set(font_scale=1.2)
         seaborn.heatmap(matrix, vmin=0, vmax=100, cmap="vlag", cbar_kws={"label": "Percentage of voters"})
         plt.xlabel("Voted For")
         plt.ylabel("Original Party")
@@ -87,10 +87,10 @@ def plot_barplot(folder_path: str, save_folder: str, n_runs: int, filename: str,
     for swing, result, stdev in zip(x, y, stdevs):
         plt.figure(figsize=(16, 9)) 
         fig, ax = plt.subplots() 
-        plt.barh(party_mappings, result,
+        plt.barh(party_mappings, [int(number) for number in result],
                 align='center', alpha=0.5, ecolor='black', xerr=stdev, capsize=5)
         for i, v in enumerate(result):
-            ax.text(v - v/2, i-0.25, str(v), color='black', fontweight='bold')
+            ax.text(v - v/2, i-0.25, str(int(v)), color='black', fontweight='bold')
         plt.yticks(party_mappings)
         plt.title(
             r"Seat Distribution for $s^{\uparrow}$ of " + str(round(swing, 1)))
@@ -135,7 +135,6 @@ def main(cfg: DictConfig):
         plot_parties_2d(filename="profiles_text",
                         save_folder=figure_folder, logos=False)
         plot_happiness(data_folder + "/happiness/", figure_folder, cfg.upper_swing, poll)
-        #plot_happiness(data_folder + "happiness" + os.sep, figure_folder, cfg.upper_swing, poll=poll)
 
 
 if __name__ == "__main__":
