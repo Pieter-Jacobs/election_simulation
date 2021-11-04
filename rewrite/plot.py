@@ -49,6 +49,7 @@ def plot_parties_2d(filename: str, save_folder: str, logos=True) -> None:
             plt.text(x0, y0, i, ha="center", va="center")
     fig.set_size_inches(16, 9)
     plt.savefig(save_folder + "party_profiles" + os.sep + filename + ".pdf")
+    plt.clf()
 
 
 def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, n_polls: int, filename: str) -> None:
@@ -60,6 +61,7 @@ def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, n_pol
     plt.ylim([0, 100])
     plt.errorbar(x, y, stdevs)
     plt.savefig(save_folder + "linegraphs" + os.sep + filename + ".pdf")
+    plt.clf()
 
 
 def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_polls: int, n_voters: int, filename: str) -> None:
@@ -92,9 +94,9 @@ def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: st
         plt.ylabel("Party")
         plt.xlabel("Number of seats")
         fig.set_size_inches(16, 9)
-        plt.show()
         plt.savefig(save_folder + "bargraphs" + os.sep +
                     filename + "__swing__" + str(swing) + ".pdf")
+        plt.clf()
 
 
 def plot_happiness(folder_path, save_folder, upper_swing) -> None:
@@ -116,15 +118,15 @@ def main(cfg: DictConfig):
     figure_folder = hydra.utils.get_original_cwd() + os.path.sep + "img" + \
         os.sep + "figures" + os.sep
     data_folder = hydra.utils.get_original_cwd() + os.sep + "data" + os.sep
-#   plot_strategic_voting(folder_path=data_folder
-#                         + "strategic_voting_stats", n_runs=cfg.n_runs, save_folder=figure_folder, filename="first_election", n_polls=cfg.n_polls)
-#   plot_heatmap(folder_path=data_folder
-#                + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_runs, save_folder=figure_folder, filename="first_heatmap", n_polls=cfg.n_polls)
-#   plot_histogram(folder_path=data_folder
-#                  + "election_results", save_folder=figure_folder, n_runs=cfg.n_runs, filename="first_histogram", n_polls=cfg.n_polls)
-#   plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
-#   plot_parties_2d(filename="profiles_text",
-#                   save_folder=figure_folder, logos=False)
+    plot_strategic_voting(folder_path=data_folder
+                          + "strategic_voting_stats", n_runs=cfg.n_runs, save_folder=figure_folder, filename="first_election", n_polls=cfg.n_polls)
+    plot_heatmap(folder_path=data_folder
+                + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_runs, save_folder=figure_folder, filename="first_heatmap", n_polls=cfg.n_polls)
+    plot_histogram(folder_path=data_folder
+                  + "election_results", save_folder=figure_folder, n_runs=cfg.n_runs, filename="first_histogram", n_polls=cfg.n_polls)
+    plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
+    plot_parties_2d(filename="profiles_text",
+                    save_folder=figure_folder, logos=False)
     plot_happiness(data_folder + "/happiness/", figure_folder, cfg.upper_swing)
 
 
