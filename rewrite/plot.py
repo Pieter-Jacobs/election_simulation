@@ -87,8 +87,8 @@ def plot_barplot(folder_path: str, save_folder: str, n_runs: int, filename: str,
     for swing, result, stdev in zip(x, y, stdevs):
         plt.figure(figsize=(16, 9)) 
         fig, ax = plt.subplots() 
-        plt.barh(party_mappings, result, xerr=stdev,
-                align='center', alpha=0.5, ecolor='black', capsize=5)
+        plt.barh(party_mappings, result,
+                align='center', alpha=0.5, ecolor='black', xerr=stdev, capsize=5)
         for i, v in enumerate(result):
             ax.text(v - v/2, i-0.25, str(v), color='black', fontweight='bold')
         plt.yticks(party_mappings)
@@ -135,6 +135,7 @@ def main(cfg: DictConfig):
         plot_parties_2d(filename="profiles_text",
                         save_folder=figure_folder, logos=False)
         plot_happiness(data_folder + "/happiness/", figure_folder, cfg.upper_swing, poll)
+        #plot_happiness(data_folder + "happiness" + os.sep, figure_folder, cfg.upper_swing, poll=poll)
 
 
 if __name__ == "__main__":
