@@ -101,19 +101,19 @@ def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: st
         plt.clf()
 
 
-def plot_happiness(folder_path, save_folder, upper_swing) -> None:
+def plot_happiness(folder_path, save_folder, upper_swing, poll_nr) -> None:
     happiness = []
     x = []
 
     for swing in range(0, int(10 * upper_swing) + 1):
         x.append(swing/ 10)
-        path = folder_path + "2021_swing_" + to_str(swing/10)
+        path = folder_path + "2021_swing_" + to_str(swing/10) + "_poll_" + str(poll_nr)
         happiness.append(read_float_from_file(path))
     plt.plot(x, happiness)
     plt.title("Swing vs Happiness")
     plt.xlabel(r"$s^\uparrow$")
     plt.ylabel("Happiness")
-    plt.savefig(save_folder + "happiness" + os.sep + "happiness.pdf")
+    plt.savefig(f"{save_folder}happiness{os.sep}_swing_{swing}_poll_{poll_nr}.pdf")
 
 @hydra.main(config_path="conf", config_name="config.yaml")
 def main(cfg: DictConfig):

@@ -7,7 +7,7 @@ import numpy as np
 
 @hydra.main(config_path="conf", config_name="config.yaml")
 def main(cfg: DictConfig):
-    happiness = 0
+    happiness = [0] * cfg.n_polls
     for run in range(cfg.n_runs):
         np.random.seed(run)
         election = Election(n_seats=cfg.n_seats,
@@ -20,12 +20,12 @@ def main(cfg: DictConfig):
                                 + "strategic_voting_stats" + os.sep + cfg.polls.name + "_swing_" + str(cfg.upper_swing) + "_run_" + str(run) + '_poll_' + str(poll_nr))
             write_matrix_to_file(matrix=vote_matrix, path=hydra.utils.get_original_cwd(
             ) + os.sep + "data" + os.sep + "voter_matrices" + os.sep + cfg.polls.name + "_swing_" + str(cfg.upper_swing) + "_run_" + str(run) + '_poll_' + str(poll_nr))
-        
-        happiness += election.average_happiness()
+            happiness += election.average_happiness()
       
-    happiness /= cfg.n_runs
-    write_string_to_file(string=f"{happiness}", path=hydra.utils.get_original_cwd() + os.sep + "data" + os.sep
-                          + "happiness" + os.sep + cfg.polls.name + "_swing_" + str(cfg.upper_swing))
+    happiness = [happy / cfg.n_runs for happy in happiness]
+    for poll_nr in cfg.n_polls:
+        write_string_to_file(string=f"{happiness}", path=hydra.utils.get_original_cwd() + os.sep + "data" + os.sep
+                            + "happiness" + os.sep + cfg.polls.name + "_swing_" + str(cfg.upper_swing) + "_poll_" + str(poll_nr))
 
 
 if __name__ == "__main__":
