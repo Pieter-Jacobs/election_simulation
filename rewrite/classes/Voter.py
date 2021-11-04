@@ -1,11 +1,13 @@
-from typing import Protocol
 from imports import *
 from helpers import cosine_similarity
 import numpy as np
 from classes.Party import Party
+from classes.Coalition import Coalition
 
 
 class Voter(object):
+    coal_scores = {i : 0 for i in range(30)}
+
     def __init__(self, initial_party: Party, parties: list, upper_swing: float) -> None:
         self.swing = np.random.uniform(low=0, high=upper_swing)
         self.profile = self.create_position(initial_party)
@@ -13,16 +15,24 @@ class Voter(object):
         self.party = parties[np.argmax(self.similarities)]
         super().__init__()
 
+
     def vote(self, parties: list, coalitions: list, residual_seats: list) -> Party:
         scores = self.similarities + residual_seats + \
             self.compute_coalition_scores(parties, coalitions)
         party = parties[np.argmax(scores)]
         return party
 
+
     def compute_similarities(self, parties: list) -> list:
         similarities = np.array([cosine_similarity(
             self.profile, parties[i].profile) for i in range(len(parties))])
         return similarities
+
+
+    # Find voter happiness with coalition
+    def compute_happiness(self, coalition: Coalition) -> float:
+        return cosine_similarity(self.profile, coalition.profile)
+
 
     def create_position(self, party: Party) -> list:
         profile = party.profile.copy()
@@ -38,12 +48,29 @@ class Voter(object):
         return profile
 
     def compute_coalition_scores(self, parties: list, coalitions: list) -> list:
-        score_matrix = []
+        scores = []
         for party in parties:
             coalitions_with_party = [
                 coalition for coalition in coalitions if party in coalition.parties]
-            score_matrix.append([cosine_similarity(self.profile, coalition.profile)
-                                * coalition.feasibility for coalition in coalitions_with_party])
-        scores = [len([score for score in score_array if score >
-                      0.1])/10 for score_array in score_matrix]
+            if coalitions_with_party == []:
+                scores.append(0)
+                continue
+
+            scores.append(max([cosine_similarity(self.profile, coalition.profile) for coalition in coalitions_with_party]))
+              # weights=[coalition.feasibility for coalition in coalitions_with_party]))
+
+        Voter.coal_scores[np.argmax(scores)] += 1
         return scores
+
+    # def compute_coalition_scores(self, parties: list, coalitions: list) -> list:
+    #     score_matrix = []
+    #     print(len(parties))
+    #     for party in parties:
+    #         coalitions_with_party = [
+    #             coalition for coalition in coalitions if party in coalition.parties]
+    #         score_matrix.append([cosine_similarity(self.profile, coalition.profile)
+    #                             * coalition.feasibility for coalition in coalitions_with_party])
+    #     scores = [sum(score_array) for score_array in score_matrix]
+    #     print(np.argmax(scores))
+    #     return scores
+

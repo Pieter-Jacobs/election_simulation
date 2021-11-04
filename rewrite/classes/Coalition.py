@@ -24,7 +24,7 @@ class Coalition(object):
         for party in self.parties:
             parties += str(party) + ", "
         parties = parties[:-2] + "]"
-        return parties
+        return parties + '\t' + str(self.feasibility)
 
     def coalition_feasibility(self) -> float:
         """

@@ -13,9 +13,9 @@ class Election(object):
         self.polls = np.array(polls)
         self.parties = self.create_parties()
         self.voters = self.create_voters(upper_swing)
-        self.coalitions = self.create_coalitions()
 
     def start(self):
+        self.coalitions = self.create_coalitions()
         strategic_vote_count = 0
         n_parties = len(self.parties)
         votes = {i: 0 for i in range(n_parties)}
@@ -28,6 +28,8 @@ class Election(object):
             vote_switches[voter.party.mapping][vote.mapping] += 1
             strategic_vote_count += voter.party != vote
         seats = self.determine_seats(votes)
+
+        self.polls = [v / self.n_voters for v in votes.values()]
         return list(seats.values()), vote_switches, (strategic_vote_count / sum(votes.values())) * 100
 
     def compute_residual_seats(self) -> list:
