@@ -27,18 +27,29 @@ class Election(object):
             votes[vote.mapping] += 1
             vote_switches[voter.party.mapping][vote.mapping] += 1
             strategic_vote_count += voter.party != vote
-        results = {k: (v / len(self.voters)) for k, v in votes.items()}
-        results_seats = self.distribute_residual_seats({k: (v * self.n_seats) for k, v in results.items()})
-        return list(results_seats.values()), vote_switches, (strategic_vote_count / sum(votes.values())) * 100
+        seats = self.determine_seats(votes)
+        return list(seats.values()), vote_switches, (strategic_vote_count / sum(votes.values())) * 100
 
     def compute_residual_seats(self) -> list:
         seats = self.polls * self.n_seats
         return np.array(seats) % 1
 
-    def distribute_residual_seats(self, results) -> list:
-        electoral_quotient = round_down(len(self.voters) / self.n_seats)
-        seats = list(results.values())
-        return
+    def determine_seats(self, results) -> list:
+        seats = {k: 0 for k in range(30)}
+        votes = np.array(list(results.values()))
+        electoral_quotient = sum(votes) / self.n_seats
+        for party in range(len(votes)):
+            party_votes = votes[party].copy()
+            while party_votes >= electoral_quotient:
+                seats[party] += 1
+                party_votes -= electoral_quotient
+        
+        averages = [votes[party] / (seats[party] + 1) for party in range(len(votes))]
+        while sum(list(seats.values())) < self.n_seats:
+            largest = np.argmax(averages)
+            seats[largest] += 1
+            averages[largest] = votes[largest] / (seats[largest] + 1)
+        return seats
 
     def create_parties(self) -> list:
         profiles = np.genfromtxt(hydra.utils.get_original_cwd(
