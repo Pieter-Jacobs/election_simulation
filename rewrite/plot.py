@@ -70,6 +70,7 @@ def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_voters: int,
         for i in range(len(matrix)):
             row_votes = np.sum(matrix[i])
             matrix[i] = ((matrix[i]/row_votes) * 100) if row_votes > 0 else 0
+        seaborn.set(font_scale=1.4)
         seaborn.heatmap(matrix, vmin=0, vmax=100, cmap="vlag", cbar_kws={"label": "Percentage of voters"})
         plt.xlabel("Voted For")
         plt.ylabel("Original Party")
@@ -80,12 +81,11 @@ def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_voters: int,
         plt.clf()
 
 
-def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int) -> None:
+def plot_barplot(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int) -> None:
     x, y, stdevs = average_results(folder_path, n_runs, poll=poll, type="list")
     party_mappings = [i for i in range(0, len(y[0]))]
     for swing, result, stdev in zip(x, y, stdevs):
         plt.figure(figsize=(16, 9)) 
-        n_seats = int(sum(result))
         fig, ax = plt.subplots() 
         plt.barh(party_mappings, result, xerr=stdev,
                 align='center', alpha=0.5, ecolor='black', capsize=5)
@@ -129,7 +129,7 @@ def main(cfg: DictConfig):
                                 + "strategic_voting_stats", n_runs=cfg.n_runs, save_folder=figure_folder, filename="first_election", poll=poll)
         plot_heatmap(folder_path=data_folder
                     + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_voters, save_folder=figure_folder, filename="first_heatmap", poll=poll)
-        plot_histogram(folder_path=data_folder
+        plot_barplot(folder_path=data_folder
                         + "election_results", save_folder=figure_folder, n_runs=cfg.n_runs, filename="first_histogram", poll=poll)
         plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
         plot_parties_2d(filename="profiles_text",
