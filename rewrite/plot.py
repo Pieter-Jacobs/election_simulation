@@ -2,6 +2,7 @@ from imports import *
 from serialize import *
 import numpy as np
 
+confg = None
 
 def to_str(number: float) -> str:
     return str(round(number, 1))
@@ -15,7 +16,7 @@ def average_results(folder_path: str, n_runs: int, type: str, poll: int) -> None
         values = []
         for run in range(n_runs):
             path = folder_path + os.sep + "2021" + "_swing_" + \
-                to_str(s) + "_run_" + str(run) + "_poll_" + str(poll)
+                to_str(s) + "_run_" + str(run) + "_poll_" + confg.polls.name + "_" + str(poll)
             if type == 'float':
                 values.append(read_float_from_file(path))
             elif type == 'matrix':
@@ -47,7 +48,7 @@ def plot_parties_2d(filename: str, save_folder: str, logos=True) -> None:
         else:
             plt.text(x0, y0, i, ha="center", va="center")
     fig.set_size_inches(16, 9)
-    plt.savefig(save_folder + "party_profiles" + os.sep + filename + ".pdf")
+    plt.savefig(save_folder + "party_profiles" + os.sep + filename + confg.polls.name + ".pdf")
     plt.clf()
 
 
@@ -59,7 +60,7 @@ def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, filen
     plt.ylabel("Strategic voting percentage")
     plt.ylim([0, 100])
     plt.errorbar(x, y, stdevs)
-    plt.savefig(save_folder + "linegraphs" + os.sep + filename + ".pdf")
+    plt.savefig(save_folder + "linegraphs" + os.sep + filename + confg.polls.name + ".pdf")
     plt.clf()
 
 
@@ -72,7 +73,7 @@ def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_voters: int,
         plt.suptitle(
             r"Voting Distribution for $s^{\uparrow}$ of " + str(round(swing, 1)))
         plt.savefig(save_folder + "heatmaps" + os.sep +
-                    filename + "__swing__" + str(swing) + ".pdf")
+                    filename + "__swing__" + str(swing) + confg.polls.name + ".pdf")
         plt.clf()
 
 
@@ -94,7 +95,7 @@ def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: st
         plt.xlabel("Number of seats")
         fig.set_size_inches(16, 9)
         plt.savefig(save_folder + "bargraphs" + os.sep +
-                    filename + "__swing__" + str(swing) + ".pdf")
+                    filename + "__swing__" + str(swing) + confg.polls.name + ".pdf")
         plt.clf()
 
 
@@ -114,6 +115,9 @@ def plot_happiness(folder_path, save_folder, upper_swing, poll_nr) -> None:
 
 @hydra.main(config_path="conf", config_name="config.yaml")
 def main(cfg: DictConfig):
+    global confg
+    confg = cfg
+
     figure_folder = hydra.utils.get_original_cwd() + os.path.sep + "img" + \
         os.sep + "figures" + os.sep
     data_folder = hydra.utils.get_original_cwd() + os.sep + "data" + os.sep
