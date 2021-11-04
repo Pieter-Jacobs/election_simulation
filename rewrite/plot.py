@@ -83,14 +83,17 @@ def plot_histogram(folder_path: str, save_folder: str, n_runs: int, filename: st
     party_mappings = [i for i in range(0, len(y[0]))]
     for swing, result, stdev in zip(x, y, stdevs):
         n_seats = int(sum(result))
-        plt.figure(figsize=(16, 9)) 
+        fig, ax = plt.subplots() 
         plt.barh(party_mappings, result, xerr=stdev,
                 align='center', alpha=0.5, ecolor='black', capsize=5)
+        for i, v in enumerate(result):
+            ax.text(v - v/2, i-0.25, str(v), color='black', fontweight='bold')
         plt.yticks(party_mappings)
         plt.title(
             r"Seat Distribution for $s^{\uparrow}$ of " + str(round(swing, 1)))
         plt.ylabel("Party")
         plt.xlabel("Number of seats")
+        fig.set_size_inches(16, 9)
         plt.show()
         plt.savefig(save_folder + "bargraphs" + os.sep +
                     filename + "__swing__" + str(swing) + ".pdf")
