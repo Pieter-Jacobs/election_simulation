@@ -70,7 +70,7 @@ def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_voters: int,
         for i in range(len(matrix)):
             row_votes = np.sum(matrix[i])
             matrix[i] = ((matrix[i]/row_votes) * 100) if row_votes > 0 else 0
-        seaborn.set(font_scale=1.4)
+        seaborn.set(font_scale=1.2)
         seaborn.heatmap(matrix, vmin=0, vmax=100, cmap="vlag", cbar_kws={"label": "Percentage of voters"})
         plt.xlabel("Voted For")
         plt.ylabel("Original Party")
@@ -135,7 +135,6 @@ def main(cfg: DictConfig):
         plot_parties_2d(filename="profiles_text",
                         save_folder=figure_folder, logos=False)
         plot_happiness(data_folder + "/happiness/", figure_folder, cfg.upper_swing, poll)
-        #plot_happiness(data_folder + "happiness" + os.sep, figure_folder, cfg.upper_swing, poll=poll)
 
 
 if __name__ == "__main__":
