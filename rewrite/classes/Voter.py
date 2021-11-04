@@ -65,32 +65,12 @@ class Voter(object):
         for party in parties:
             coalitions_with_party = [
                 coalition for coalition in coalitions if party in coalition.parties]
-            score_matrix.append([cosine_similarity(self.profile, coalition.profile)
-                                * coalition.feasibility if cosine_similarity(self.profile, coalition.profile) > 0 \
-                                  else 0 for coalition in coalitions_with_party])
+            cosine_similarities = [cosine_similarity(self.profile, coalition.profile) \
+              for coalition in coalitions_with_party]
+            score_matrix.append([cos_similarity * coalition.feasibility if cos_similarity > 0 \
+              else 0 for cos_similarity, coalition in zip(cosine_similarities, coalitions_with_party)])
+
         scores = [len([score for score in score_array if score >
                       0.1])/10 for score_array in score_matrix]
         return scores
 
-
-
-
-
-
-
-
-
-
-
-############### OLD CODE ###############
-
-    # def compute_coalition_scores(self, parties: list, coalitions: list) -> list:
-    #     score_matrix = []
-    #     for party in parties:
-    #         coalitions_with_party = [
-    #             coalition for coalition in coalitions if party in coalition.parties]
-    #         score_matrix.append([cosine_similarity(self.profile, coalition.profile)
-    #                             * coalition.feasibility for coalition in coalitions_with_party])
-    #     scores = [len([score for score in score_array if score >
-    #                   0.1])/10 for score_array in score_matrix]
-    #     return scores
