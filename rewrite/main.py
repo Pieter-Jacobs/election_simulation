@@ -23,7 +23,7 @@ def main(cfg: DictConfig):
             happiness += election.average_happiness()
       
     happiness = [happy / cfg.n_runs for happy in happiness]
-    for poll_nr in cfg.n_polls:
+    for poll_nr in range(cfg.n_polls):
         write_string_to_file(string=f"{happiness}", path=hydra.utils.get_original_cwd() + os.sep + "data" + os.sep
                             + "happiness" + os.sep + cfg.polls.name + "_swing_" + str(cfg.upper_swing) + "_poll_" + cfg.polls.name + '_' + str(poll_nr))
 

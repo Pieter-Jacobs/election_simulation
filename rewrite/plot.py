@@ -108,13 +108,13 @@ def plot_happiness(folder_path, save_folder, upper_swing, poll_nr) -> None:
 
     for swing in range(0, int(10 * upper_swing) + 1):
         x.append(swing/ 10)
-        path = folder_path + "2021_swing_" + to_str(swing/10) + "_poll_" + str(poll_nr)
+        path = folder_path + "2021_swing_" + to_str(swing/10) + "_poll_" + confg.polls.name + "_" + str(poll_nr)
         happiness.append(read_float_from_file(path))
     plt.plot(x, happiness)
     plt.title("Swing vs Happiness")
     plt.xlabel(r"$s^\uparrow$")
     plt.ylabel("Happiness")
-    plt.savefig(f"{save_folder}happiness{os.sep}_swing_{swing}_poll_{poll_nr}.pdf")
+    plt.savefig(f"{save_folder}happiness{os.sep}_swing_{swing}_poll_{confg.polls.name}_{poll_nr}.pdf")
 
 @hydra.main(config_path="conf", config_name="config.yaml")
 def main(cfg: DictConfig):
@@ -134,7 +134,7 @@ def main(cfg: DictConfig):
         plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
         plot_parties_2d(filename="profiles_text",
                         save_folder=figure_folder, logos=False)
-        plot_happiness(data_folder + "/happiness/", figure_folder, cfg.upper_swing)
+        plot_happiness(data_folder + "/happiness/", figure_folder, cfg.upper_swing, poll)
 
 
 if __name__ == "__main__":
