@@ -34,7 +34,7 @@ class Voter(object):
 
     # Check if voter voted strategically
     def voted_strategic(self) -> bool:
-        return self.voted_for == self.party
+        return self.voted_for != self.party
 
 
     # Find voter happiness with coalition
