@@ -117,7 +117,7 @@ def main(cfg: DictConfig):
     figure_folder = hydra.utils.get_original_cwd() + os.path.sep + "img" + \
         os.sep + "figures" + os.sep
     data_folder = hydra.utils.get_original_cwd() + os.sep + "data" + os.sep
-    for poll in cfg.n_polls:
+    for poll in range(cfg.n_polls):
         plot_strategic_voting(folder_path=data_folder
                                 + "strategic_voting_stats", n_runs=cfg.n_runs, save_folder=figure_folder, filename="first_election", poll=poll)
         plot_heatmap(folder_path=data_folder
