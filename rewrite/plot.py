@@ -22,7 +22,7 @@ def average_results(folder_path: str, n_runs: int, type: str, poll: int) -> None
                 values.append(read_matrix_from_file(path))
             elif type == 'list':
                 values.append(read_list_from_file(path))
-        stdev = np.std(values) if type == "float" else np.std(values, axis=0)
+        stdev = np.std(values) if type == "float" else np.std(values, axis=0, ddof=1)
         stdevs.append(stdev)
         y.append(sum(values)/n_runs)
     return x, y, stdevs
@@ -86,10 +86,10 @@ def plot_barplot(folder_path: str, save_folder: str, n_runs: int, filename: str,
     for swing, result, stdev in zip(x, y, stdevs):
         plt.figure(figsize=(16, 9)) 
         fig, ax = plt.subplots() 
-        plt.barh(party_mappings, result,
+        plt.barh(party_mappings, [int(number) for number in result],
                 align='center', alpha=0.5, ecolor='black', xerr=stdev, capsize=5)
         for i, v in enumerate(result):
-            ax.text(v - v/2, i-0.25, str(v), color='black', fontweight='bold')
+            ax.text(v - v/2, i-0.25, str(int(v)), color='black', fontweight='bold')
         plt.yticks(party_mappings)
         plt.title(
             r"Seat Distribution for $s^{\uparrow}$ of " + str(round(swing, 1)))
