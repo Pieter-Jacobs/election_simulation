@@ -6,6 +6,41 @@ import numpy as np
 
 
 class Election(object):
+    """ 
+    Defines a class that is used to run a simulation of a democratic election
+
+    Attributes:
+    -----------
+    polls: list of int
+        Dispatcher used to dispatch the choice of query function
+    parties: list of list of
+        The language model used for classification
+    voters: list of Voter
+        String representing the chosen query function
+
+    Methods
+    -------
+    start():
+        Starts the election
+    compute_residual_seats(self) -> list:
+        Computes the residual seats
+    determine_seats() -> list:
+        Determines the seats
+    count_votes():
+        Counts the votes for each party and determines the amount of strategic votes, also calculates the number of seats for each party
+    create_parties():
+        Initialises the parties based hard coded vectors in a text file
+    create_voters():
+        Initialises voters based on the polls
+    create_coalitions():
+        Creates the coalitions based upon the parties and polls
+    calculate_chance_to_influence():
+        calculates chances that a vote will make a difference and influence the elections
+    average_happiness(self) -> float:
+        Calculates the average happiness of the voters
+    most_feasible_coalition(self) -> Coalition:
+        Returns the most feasible coalition
+    """
     def __init__(self, n_seats: int, n_voters: int, polls: DictConfig, upper_swing: float) -> None:
         super().__init__()
         self.n_seats = n_seats
@@ -15,6 +50,12 @@ class Election(object):
         self.voters = self.create_voters(upper_swing)
         self.coalition = None
 
+    """
+    Start the election
+
+    returns:
+        The distribution of seats after the election
+    """
     def start(self):
         self.coalitions = self.create_coalitions()
         strategic_vote_count = 0
@@ -42,10 +83,22 @@ class Election(object):
 
         return list(seats.values()), vote_switches, (strategic_vote_count / sum(votes.values())) * 100
 
+    """
+    Compute the seats mod 1 to obtain the residual seats
+    """
     def compute_residual_seats(self) -> list:
         seats = self.polls * self.n_seats
         return np.array(seats) % 1
 
+    """
+    Determine the seat distribution after the voting has closed
+    
+    Args:
+        results: list of the votes
+
+    Returns:
+        The seat distribution
+    """
     def determine_seats(self, results) -> list:
         seats = {k: 0 for k in range(30)}
         votes = np.array(list(results.values()))
@@ -63,6 +116,12 @@ class Election(object):
             averages[largest] = votes[largest] / (seats[largest] + 1)
         return seats
 
+    """
+    Initialise the parties
+
+    returns:
+        The parties
+    """
     def create_parties(self) -> list:
         profiles = np.genfromtxt(hydra.utils.get_original_cwd(
         ) + os.path.sep + 'party_profiles.csv', delimiter=',')
@@ -70,11 +129,23 @@ class Election(object):
                    for i, (profile, polled_votes) in enumerate(zip(profiles, self.polls))]
         return parties
 
+    """
+    Initialize the voters
+
+    returns:
+        The voters
+    """
     def create_voters(self, upper_swing: float) -> list:
         voters = [Voter(initial_party=self.parties[i], parties=self.parties, upper_swing=upper_swing) for i in range(len(self.polls))
                   for j in range(int(self.polls[i]*self.n_voters))]
         return voters
 
+    """
+    Initialise the coalitions
+    
+    returns:
+        The coalitions
+    """
     def create_coalitions(self) -> list:
         self.coalitions = self.find_coalitions()
         self.coalitions.sort(
@@ -82,6 +153,13 @@ class Election(object):
         
         return self.coalitions
 
+
+    """
+    Find the possible coalitions based on the following criteria:
+        - The coalition must have over half of the seats
+        - The coalition cannot miss a single party and still have over half of the seats
+        - The coalition has no more than 5 parties
+    """
     def find_coalitions(self, current_parties=[], current_idx=0) -> list:
         polls = [party.polled_votes for party in current_parties]
         polled_votes = sum(polls)
@@ -99,11 +177,15 @@ class Election(object):
         return coalitions
     
 
-    # Find most feasible coalition
+    """
+    Find most feasible coalition
+    """
     def most_feasible_coalition(self) -> Coalition:
         return max(self.coalitions, key=lambda coalition: coalition.feasibility)
 
-    # Find average happiness of all voters
+    """
+    Find average happiness of all voters
+    """
     def average_happiness(self) -> float:
-        coalition = self.most_feasible_coalition()
+        coalition = self.__most_feasible_coalition()
         return average([voter.compute_happiness(coalition) for voter in self.voters if voter.voted_strategic()])
