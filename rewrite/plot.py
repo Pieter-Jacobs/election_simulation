@@ -79,8 +79,9 @@ def plot_happiness(folder_path: str, save_folder: str, n_runs: int, filename: st
     plt.xlabel(r"$s^\uparrow$")
     plt.ylabel("Happiness")
     plt.xticks([swing for swing in x])
+    plt.errorbar(x, y, stdevs)
     plt.savefig(
-        f"{save_folder}linegraphs{os.sep}filename{os.sep}_distribution_{confg.polls.name}_{poll}.pdf")
+        f"{save_folder}linegraphs{os.sep}{filename}{os.sep}_distribution_{confg.polls.name}_{poll}.pdf")
     plt.close('all')
 
 
