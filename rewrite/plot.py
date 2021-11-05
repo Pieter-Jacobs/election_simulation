@@ -2,8 +2,6 @@ from imports import *
 from serialize import *
 import numpy as np
 
-confg = None
-
 def to_str(number: float) -> str:
     return str(round(number, 1))
 
@@ -15,7 +13,7 @@ def average_results(folder_path: str, n_runs: int, type: str, poll: int) -> None
     for s in x:
         values = []
         for run in range(n_runs):
-            path = folder_path + os.sep + "2021" + "_swing_" + \
+            path = folder_path + os.sep + "2012" + "_swing_" + \
                 to_str(s) + "_run_" + str(run) + "_poll_" + confg.polls.name + "_" + str(poll)
             if type == 'float':
                 values.append(read_float_from_file(path))
@@ -49,7 +47,7 @@ def plot_parties_2d(filename: str, save_folder: str, logos=True) -> None:
             plt.text(x0, y0, i, ha="center", va="center")
     fig.set_size_inches(16, 9)
     plt.savefig(save_folder + "party_profiles" + os.sep + filename + confg.polls.name + ".pdf")
-    plt.close()
+    plt.close('all')
 
 
 def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int) -> None:
@@ -60,8 +58,8 @@ def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, filen
     plt.ylabel("Strategic voting percentage")
     plt.ylim([0, 100])
     plt.errorbar(x, y, stdevs)
-    plt.savefig(save_folder + "linegraphs" + os.sep + filename + confg.polls.name + '_' + str(poll) + ".pdf")
-    plt.close()
+    plt.savefig(save_folder + "linegraphs" + os.sep + filename + "_distribution_" + confg.polls.name + '_poll_' + str(poll) + ".pdf")
+    plt.close('all')
 
 
 def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_voters: int, filename: str, poll: int) -> None:
@@ -70,15 +68,16 @@ def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_voters: int,
         for i in range(len(matrix)):
             row_votes = np.sum(matrix[i])
             matrix[i] = ((matrix[i]/row_votes) * 100) if row_votes > 0 else 0
-        seaborn.set(font_scale=1.2)
-        seaborn.heatmap(matrix, vmin=0, vmax=100, cmap="vlag", cbar_kws={"label": "Percentage of voters"})
+        fig, ax = plt.subplots(figsize=(10,10))
+        seaborn.set(font_scale=1.05)
+        seaborn.heatmap(matrix, vmin=0, vmax=100, cmap="vlag", cbar_kws={"label": "Percentage of voters"}, square=True, ax=ax)
         plt.xlabel("Voted For")
         plt.ylabel("Original Party")
         plt.suptitle(
             r"Voting Distribution for $s^{\uparrow}$ of " + str(round(swing, 1)))
         plt.savefig(save_folder + "heatmaps" + os.sep +
-                    filename + "__swing__" + str(swing) + confg.polls.name + ".pdf")
-        plt.close()
+                    filename + "_swing_" + str(swing) + "_distribution_" + confg.polls.name + "_poll_" + str(poll) + ".pdf")
+        plt.close('all')
 
 
 def plot_barplot(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int) -> None:
@@ -98,7 +97,7 @@ def plot_barplot(folder_path: str, save_folder: str, n_runs: int, filename: str,
         plt.xlabel("Number of seats")
         fig.set_size_inches(16, 9)
         plt.savefig(save_folder + "bargraphs" + os.sep +
-                    filename + "__swing__" + str(swing) + confg.polls.name + ".pdf")
+                    filename + "_swing_" + str(swing) + "_distribution_" + confg.polls.name + "_poll_" + str(poll) + ".pdf")
         plt.close()
 
 
@@ -108,14 +107,14 @@ def plot_happiness(folder_path, save_folder, upper_swing, poll_nr) -> None:
 
     for swing in range(0, int(10 * upper_swing) + 1):
         x.append(swing/ 10)
-        path = folder_path + "2021_swing_" + to_str(swing/10) + "_poll_" + confg.polls.name + "_" + str(poll_nr)
+        path = folder_path + "2012_swing_" + to_str(swing/10) + "_poll_" + confg.polls.name + "_" + str(poll_nr)
         happiness.append(read_float_from_file(path))
     plt.plot(x, happiness)
     plt.title("Swing vs Happiness")
     plt.xlabel(r"$s^\uparrow$")
     plt.ylabel("Happiness")
     plt.savefig(f"{save_folder}happiness{os.sep}_swing_{swing}_poll_{confg.polls.name}_{poll_nr}.pdf")
-    plt.close()
+    plt.close('all')
 
 @hydra.main(config_path="conf", config_name="config.yaml")
 def main(cfg: DictConfig):

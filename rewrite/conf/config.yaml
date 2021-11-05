@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - polls: '2021'
+  - polls: '2012'
 n_runs: 5
 n_polls: 2
 n_voters: 10000
