@@ -1,0 +1,8 @@
+defaults:
+  - _self_
+  - polls: real_life
+
+uncertainty: 0.2
+seats: 150
+swing: 0.5
+run: 1
