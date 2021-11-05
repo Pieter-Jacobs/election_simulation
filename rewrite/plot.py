@@ -14,7 +14,7 @@ def average_results(folder_path: str, n_runs: int, type: str, poll: int) -> None
     for s in x:
         values = []
         for run in range(n_runs):
-            path = folder_path + os.sep + "2012" + "_swing_" + \
+            path = folder_path + os.sep + "2021" + "_swing_" + \
                 to_str(s) + "_run_" + str(run) + "_poll_" + \
                 confg.polls.name + "_" + str(poll)
             if type == 'float':
@@ -133,17 +133,20 @@ def main(cfg: DictConfig):
 
     figure_folder = hydra.utils.get_original_cwd() + os.path.sep + "img" + \
         os.sep + "figures" + os.sep
+    
+    fig.set_size_inches(16, 9)
+    plt.savefig(figure_folder + "2012.pdf")
     data_folder = hydra.utils.get_original_cwd() + os.sep + "data" + os.sep
     for poll in range(cfg.n_polls):
         plot_strategic_voting(folder_path=data_folder
                               + "strategic_voting_stats", n_runs=cfg.n_runs, save_folder=figure_folder, filename="first_election", poll=poll)
-        #plot_heatmap(folder_path=data_folder
-        #            + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_voters, save_folder=figure_folder, filename="first_heatmap", poll=poll)
-        #plot_barplot(folder_path=data_folder
-        #                + "election_results", save_folder=figure_folder, n_runs=cfg.n_runs, filename="first_histogram", poll=poll)
-        #plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
-        #plot_parties_2d(filename="profiles_text",
-        #                save_folder=figure_folder, logos=False)
+        plot_heatmap(folder_path=data_folder
+                   + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_voters, save_folder=figure_folder, filename="first_heatmap", poll=poll)
+        plot_barplot(folder_path=data_folder
+                       + "election_results", save_folder=figure_folder, n_runs=cfg.n_runs, filename="first_histogram", poll=poll)
+        plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
+        plot_parties_2d(filename="profiles_text",
+                       save_folder=figure_folder, logos=False)
         plot_happiness(data_folder + os.sep + "happiness", figure_folder, n_runs=cfg.n_runs, filename="happiness", poll=poll)
 
 
