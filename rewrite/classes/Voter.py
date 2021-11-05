@@ -6,8 +6,15 @@ from classes.Coalition import Coalition
 
 
 class Voter(object):
-    coal_scores = {i : 0 for i in range(30)}
+    """A class representing a voter.
 
+    Attributes:
+        swing (float): The swing of the voter.
+        profile: The political preference
+        similarities: The similarities of the voter to each party
+        party: The party the voter is initially voting for
+        expected_party_seats: The expected number of seats the party will get
+    """
     def __init__(self, initial_party: Party, parties: list, upper_swing: float) -> None:
         self.swing = np.random.uniform(low=0, high=upper_swing)
         self.profile = self.create_position(initial_party)
@@ -17,6 +24,13 @@ class Voter(object):
         super().__init__()
 
 
+    """
+    Lets the candidate vote based on the voter's profile, the candidate's profile
+    and strategic reasons.
+      parties: The list of candidate parties
+      coalitions: The list of possible coalitions according to poll
+      residual_seats: The list of seats % 1 for each party
+    """
     def vote(self, parties: list, coalitions: list, residual_seats: list) -> Party:
         scores = self.similarities + residual_seats + \
             self.compute_coalition_scores(parties, coalitions)
@@ -26,18 +40,31 @@ class Voter(object):
         return party
 
 
+    """
+    Compute the similarity of the voter to each party
+
+    Args:
+        parties: The list of candidate parties
+    """
     def compute_similarities(self, parties: list) -> list:
         similarities = np.array([cosine_similarity(
             self.profile, parties[i].profile) for i in range(len(parties))])
         return similarities
     
 
-    # Check if voter voted strategically
+    """
+    Returns if voter voted strategically
+    """
     def voted_strategic(self) -> bool:
         return self.voted_for != self.party
 
 
-    # Find voter happiness with coalition
+    """
+    Find voter happiness with election outcome
+
+    Returns:
+        coalition: The coalition that won the election
+    """
     def compute_happiness(self, coalition: Coalition) -> float:
         if not self.voted_strategic():
             return None
@@ -46,6 +73,16 @@ class Voter(object):
         return 2 * happiness if self.voted_for in coalition.parties else happiness
 
 
+    """
+    Creates the profile of the voter based on the party he is initially
+    voting for.
+
+    Args:
+        party: The party the voter is initially voting for
+
+    returns:
+        profile: The profile of the voter
+    """
     def create_position(self, party: Party) -> list:
         profile = party.profile.copy()
         for idx, opinion in enumerate(profile):
@@ -60,6 +97,16 @@ class Voter(object):
         return profile
 
 
+    """
+    Compute the score of the voter for each coalition
+
+    Args:
+        parties: The list of candidate parties
+        coalitions: The list of possible coalitions according to poll
+
+    returns:
+        scores: The list of scores for each coalition
+    """
     def compute_coalition_scores(self, parties: list, coalitions: list) -> list:
         score_matrix = []
         for party in parties:
