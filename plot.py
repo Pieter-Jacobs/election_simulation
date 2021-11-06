@@ -3,6 +3,7 @@ from serialize import *
 from helpers import to_str
 import numpy as np
 
+
 def average_results(folder_path: str, n_runs: int, type: str, poll: int, poll_name: str) -> None:
     x = [x for x in np.arange(0, 1.1, 0.1)]
     y = []
@@ -50,7 +51,7 @@ def plot_parties_2d(filename: str, save_folder: str, logos=True) -> None:
     plt.close('all')
 
 
-def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int, poll_name:str) -> None:
+def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int, poll_name: str) -> None:
     x, y, stdevs = average_results(
         folder_path, n_runs, poll=poll, type='float', poll_name=poll_name)
     plt.figure(figsize=(9, 5))
@@ -66,7 +67,7 @@ def plot_strategic_voting(folder_path: str, save_folder: str, n_runs: int, filen
     plt.close('all')
 
 
-def plot_happiness(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int, poll_name:str) -> None:
+def plot_happiness(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int, poll_name: str) -> None:
     x, y, stdevs = average_results(
         folder_path, n_runs, poll=poll, type='float', poll_name=poll_name)
     plt.figure(figsize=(9, 5))
@@ -82,7 +83,8 @@ def plot_happiness(folder_path: str, save_folder: str, n_runs: int, filename: st
 
 
 def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_voters: int, filename: str, poll: int, poll_name: str) -> None:
-    x, y, _ = average_results(folder_path, n_runs, poll=poll, type="matrix", poll_name=poll_name)
+    x, y, _ = average_results(
+        folder_path, n_runs, poll=poll, type="matrix", poll_name=poll_name)
     for swing, matrix in zip(x, y):
         for i in range(len(matrix)):
             row_votes = np.sum(matrix[i])
@@ -101,7 +103,8 @@ def plot_heatmap(folder_path: str, save_folder: str, n_runs: int, n_voters: int,
 
 
 def plot_barplot(folder_path: str, save_folder: str, n_runs: int, filename: str, poll: int, poll_name: str) -> None:
-    x, y, stdevs = average_results(folder_path, n_runs, poll=poll, type="list", poll_name=poll_name)
+    x, y, stdevs = average_results(
+        folder_path, n_runs, poll=poll, type="list", poll_name=poll_name)
     party_mappings = [i for i in range(0, len(y[0]))]
     for swing, result, stdev in zip(x, y, stdevs):
         plt.figure(figsize=(16, 9))
@@ -131,13 +134,14 @@ def main(cfg: DictConfig):
         plot_strategic_voting(folder_path=data_folder
                               + "strategic_voting_stats", n_runs=cfg.n_runs, save_folder=figure_folder, filename="first_election", poll=poll, poll_name=cfg.polls.name)
         plot_heatmap(folder_path=data_folder
-                   + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_voters, save_folder=figure_folder, filename="first_heatmap", poll=poll, poll_name=cfg.polls.name)
+                     + "voter_matrices", n_runs=cfg.n_runs, n_voters=cfg.n_voters, save_folder=figure_folder, filename="first_heatmap", poll=poll, poll_name=cfg.polls.name)
         plot_barplot(folder_path=data_folder
-                       + "election_results", save_folder=figure_folder, n_runs=cfg.n_runs, filename="first_histogram", poll=poll, poll_name=cfg.polls.name)
+                     + "election_results", save_folder=figure_folder, n_runs=cfg.n_runs, filename="first_histogram", poll=poll, poll_name=cfg.polls.name)
         plot_parties_2d(filename="profiles_logos", save_folder=figure_folder)
         plot_parties_2d(filename="profiles_text",
-                       save_folder=figure_folder, logos=False)
-        plot_happiness(data_folder + os.sep + "happiness", figure_folder, n_runs=cfg.n_runs, filename="happiness", poll=poll, poll_name=cfg.polls.name)
+                        save_folder=figure_folder, logos=False)
+        plot_happiness(data_folder + os.sep + "happiness", figure_folder,
+                       n_runs=cfg.n_runs, filename="happiness", poll=poll, poll_name=cfg.polls.name)
 
 
 if __name__ == "__main__":

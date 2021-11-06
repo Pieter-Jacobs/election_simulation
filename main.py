@@ -7,6 +7,7 @@ import numpy as np
 
 @hydra.main(config_path="conf", config_name="config.yaml")
 def main(cfg: DictConfig):
+    """Run the election with two polls and save the seat distribution, strategic voting percentage, happiness and vote directions"""
     for run in range(cfg.n_runs):
         np.random.seed(run)
         election = Election(n_seats=cfg.n_seats,

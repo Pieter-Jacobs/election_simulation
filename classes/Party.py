@@ -11,6 +11,7 @@ class Party(object):
       self.polled_votes: A list of the candidate's votes.
       self.mapping: The candidate's index in the party list.
     """
+
     def __init__(self, profile: list, polled_votes: list, mapping: int) -> None:
         self.profile = profile
         self.polled_votes = polled_votes
