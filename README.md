@@ -16,7 +16,7 @@ pip install dill hydra matplotlib numba sklearn seaborn
 ## Usage
 To run the model:
 ```bash
-    python main.py -m swing=0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0 polls=polls_2012
-    python main.py -m swing=0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0 polls=polls_2021
+    python main.py -m swing=0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0 polls=poll_2012
+    python main.py -m swing=0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0 polls=poll_2021
     python plot.py
 ```

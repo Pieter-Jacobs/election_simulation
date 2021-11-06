@@ -12,9 +12,9 @@ class Election(object):
     Attributes:
     -----------
     polls: list of int
-        Dispatcher used to dispatch the choice of query function
-    parties: list of list of
-        The language model used for classification
+        The percentage of votes polled for each party 
+    parties: list of Party
+        
     voters: list of Voter
         String representing the chosen query function
 

@@ -6,12 +6,14 @@ import numpy as np
 class Coalition(object):
     def __init__(self, parties: list) -> None:
         """
+        Represents a coalition consisting of parties
+
         Parameters:
         -----------
         parties: list 
-            The indices participating parties in Coalition.party_vectors
+            The mappings of participating parties
         polls: list
-            The amount of votes expected for each party, same order as the parties parameter
+            The amount of votes expected for each party
         """
         self.parties = parties
         self.polls = [party.polled_votes for party in parties]
